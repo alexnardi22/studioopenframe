@@ -1,0 +1,13 @@
+{
+  "name": "studioopenframe",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Site oficial studioopenframe.com · OpenFrame Studio de Sistemas",
+  "scripts": {
+    "dev": "serve . -l ${PORT:-3000}",
+    "start": "serve . -l ${PORT:-3000}"
+  },
+  "devDependencies": {
+    "serve": "14.2.4"
+  }
+}

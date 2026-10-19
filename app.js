@@ -3,11 +3,10 @@
   'use strict';
 
   // ───────────────────────── CONFIG ─────────────────────────
-  // Preencha para o formulário enviar direto (WhatsApp tem prioridade).
-  const CONTACT = {
-    whatsapp: '',   // ex.: '14075551234' (só números, com código do país)
-    email: ''       // ex.: 'contato@studioopenframe.com'
-  };
+  // Destino das missões enviadas pelo formulário (FormSubmit → e-mail).
+  // Depois da ativação, o FormSubmit envia um código aleatório que pode substituir o e-mail aqui.
+  const LEADS_TO = 'alex.nardi@hotmail.com';
+  const LEADS_ENDPOINT = `https://formsubmit.co/ajax/${LEADS_TO}`;
 
   const RM = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const $ = (s, r = document) => r.querySelector(s);
@@ -295,12 +294,33 @@
   const form = $('#launchForm'), msg = $('#formMsg');
   form.addEventListener('submit', async e => {
     e.preventDefault();
-    const nome = $('#fName').value.trim(), empresa = $('#fCompany').value.trim(), tarefa = $('#fTask').value.trim();
-    if (!nome || !tarefa) { msg.textContent = 'PREENCHA SEU NOME E A TAREFA, POR FAVOR.'; (!nome ? $('#fName') : $('#fTask')).focus(); return; }
-    const text = `Olá, OpenFrame! Quero iniciar uma missão.\n\nNome: ${nome}\nEmpresa: ${empresa || '-'}\nTarefa que mais consome meu tempo: ${tarefa}`;
-    if (CONTACT.whatsapp) { window.open(`https://wa.me/${CONTACT.whatsapp}?text=${encodeURIComponent(text)}`, '_blank', 'noopener'); msg.textContent = 'ABRINDO O WHATSAPP… MISSÃO RECEBIDA.'; }
-    else if (CONTACT.email) { location.href = `mailto:${CONTACT.email}?subject=${encodeURIComponent('Iniciar missão · ' + (empresa || nome))}&body=${encodeURIComponent(text)}`; msg.textContent = 'ABRINDO SEU E-MAIL… MISSÃO RECEBIDA.'; }
-    else { try { await navigator.clipboard.writeText(text); } catch (_) {} msg.textContent = 'MENSAGEM PRONTA E COPIADA. CANAL DE CONTATO EM CONFIGURAÇÃO.'; }
+    const nome = $('#fName').value.trim(), empresa = $('#fCompany').value.trim(), contato = $('#fContact').value.trim(), tarefa = $('#fTask').value.trim();
+    const missing = !nome ? '#fName' : !contato ? '#fContact' : !tarefa ? '#fTask' : null;
+    if (missing) { msg.textContent = 'PREENCHA NOME, CONTATO E A TAREFA, POR FAVOR.'; $(missing).focus(); return; }
+    if ($('#fHp').value) { msg.textContent = 'MISSÃO RECEBIDA.'; form.reset(); return; }
+    const btn = $('#launchBtn'); btn.disabled = true; btn.textContent = 'TRANSMITINDO…'; msg.textContent = '';
+    const quando = new Date().toLocaleString('pt-BR', { timeZone: 'America/New_York' });
+    try {
+      const r = await fetch(LEADS_ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({
+          _subject: `Nova missão · ${empresa || nome}`,
+          _template: 'table', _captcha: 'false',
+          _replyto: contato.includes('@') ? contato : undefined,
+          'Nome': nome, 'Empresa': empresa || '-', 'Contato para resposta': contato,
+          'Tarefa que mais consome o tempo': tarefa, 'Enviado em (Orlando)': quando, 'Origem': location.href
+        })
+      });
+      const data = await r.json().catch(() => ({}));
+      if (!r.ok || data.success === false || data.success === 'false') throw new Error(data.message || r.status);
+      msg.textContent = 'MISSÃO RECEBIDA. VAMOS RESPONDER PELO CONTATO QUE VOCÊ INFORMOU.';
+      form.reset(); btn.textContent = 'MISSÃO ENVIADA ✓';
+      setTimeout(() => { btn.disabled = false; btn.textContent = 'INICIAR MISSÃO'; }, 6000);
+    } catch (err) {
+      btn.disabled = false; btn.textContent = 'INICIAR MISSÃO';
+      msg.textContent = `NÃO CONSEGUIMOS ENVIAR AGORA. TENTE DE NOVO OU ESCREVA PARA ${LEADS_TO.toUpperCase()}.`;
+    }
   });
 
   // ───────────────────────── AUTOPILOT (idle) ─────────────────────────

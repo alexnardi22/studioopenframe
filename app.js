@@ -300,24 +300,29 @@
     if ($('#fHp').value) { msg.textContent = 'MISSÃO RECEBIDA.'; form.reset(); return; }
     const btn = $('#launchBtn'); btn.disabled = true; btn.textContent = 'TRANSMITINDO…'; msg.textContent = '';
     const quando = new Date().toLocaleString('pt-BR', { timeZone: 'America/New_York' });
-    try {
-      const r = await fetch(LEADS_ENDPOINT, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        body: JSON.stringify({
-          _subject: `Nova missão · ${empresa || nome}`,
-          _template: 'table', _captcha: 'false',
-          _replyto: contato.includes('@') ? contato : undefined,
-          'Nome': nome, 'Empresa': empresa || '-', 'Contato para resposta': contato,
-          'Tarefa que mais consome o tempo': tarefa, 'Enviado em (Orlando)': quando, 'Origem': location.href
-        })
-      });
-      const data = await r.json().catch(() => ({}));
-      if (!r.ok || data.success === false || data.success === 'false') throw new Error(data.message || r.status);
+    // 1) salva no banco do site (Painel de Missões)  2) aviso por e-mail (FormSubmit), em paralelo
+    const salvar = fetch('/api/missao', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ nome, empresa, contato, tarefa, origem: location.href, _honey: $('#fHp').value })
+    }).then(async r => { const d = await r.json().catch(() => ({})); if (!r.ok || !d.ok) throw new Error(d.error || r.status); return d; });
+    const avisar = fetch(LEADS_ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      body: JSON.stringify({
+        _subject: `Nova missão · ${empresa || nome}`,
+        _template: 'table', _captcha: 'false',
+        _replyto: contato.includes('@') ? contato : undefined,
+        'Nome': nome, 'Empresa': empresa || '-', 'Contato para resposta': contato,
+        'Tarefa que mais consome o tempo': tarefa, 'Enviado em (Orlando)': quando,
+        'Painel': 'https://www.studioopenframe.com/painel'
+      })
+    }).then(async r => { const d = await r.json().catch(() => ({})); if (!r.ok || d.success === false || d.success === 'false') throw new Error(d.message || r.status); return d; });
+    const [s1, s2] = await Promise.allSettled([salvar, avisar]);
+    if (s1.status === 'fulfilled' || s2.status === 'fulfilled') {
       msg.textContent = 'MISSÃO RECEBIDA. VAMOS RESPONDER PELO CONTATO QUE VOCÊ INFORMOU.';
       form.reset(); btn.textContent = 'MISSÃO ENVIADA ✓';
       setTimeout(() => { btn.disabled = false; btn.textContent = 'INICIAR MISSÃO'; }, 6000);
-    } catch (err) {
+    } else {
       btn.disabled = false; btn.textContent = 'INICIAR MISSÃO';
       msg.textContent = `NÃO CONSEGUIMOS ENVIAR AGORA. TENTE DE NOVO OU ESCREVA PARA ${LEADS_TO.toUpperCase()}.`;
     }

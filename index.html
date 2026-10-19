@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>OpenFrame · Studio de Sistemas</title>
+<meta name="description" content="Sistemas que executam o trabalho da sua empresa todos os dias e só chamam você quando a decisão é realmente sua. O trabalho continua. Você volta a viver.">
+<meta name="theme-color" content="#06070A">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="pt_BR">
+<meta property="og:title" content="OpenFrame · O trabalho continua. Você volta a viver.">
+<meta property="og:description" content="Redesenhamos processos e construímos sistemas que executam trabalho todos os dias.">
+<meta property="og:image" content="https://studioopenframe.com/assets/og.jpg">
+<meta property="og:url" content="https://studioopenframe.com/">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link rel="preload" href="assets/fonts/D-DIN-PRO-400-Regular.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/D-DIN-PRO-700-Bold.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/logo-blue.webp" as="image">
+<link rel="preload" href="assets/logo-gold.webp" as="image">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<a class="skip" href="#conteudo">Pular para o conteúdo</a>
+
+<header class="nav" id="nav">
+  <a href="#topo" class="brand" aria-label="OpenFrame, início">
+    <img src="assets/logo.webp" alt="" width="34" height="35">
+    <span>OPENFRAME</span>
+  </a>
+  <nav aria-label="Principal">
+    <a href="#impossivel">O IMPOSSÍVEL</a>
+    <a href="#missoes">MISSÕES</a>
+    <a href="#manifesto">MANIFESTO</a>
+    <a href="#metodo">MÉTODO</a>
+    <a href="#iniciar" class="btn btn-line">INICIAR MISSÃO</a>
+  </nav>
+</header>
+
+<main id="conteudo">
+
+<!-- 01 · ACOPLAMENTO -->
+<section class="hero" id="topo" aria-label="Abertura">
+  <canvas class="stars" id="stars" aria-hidden="true"></canvas>
+  <div class="dock-wrap" aria-hidden="true">
+    <div class="rings">
+      <i class="ring r1"></i><i class="ring r2"></i><i class="ring r3"></i>
+    </div>
+    <div class="dock" id="dock">
+      <img class="part blue" src="assets/logo-blue.webp" alt="">
+      <img class="part gold" src="assets/logo-gold.webp" alt="">
+      <span class="flash"></span>
+    </div>
+    <p class="dock-status mono" id="dockStatus">APROXIMAÇÃO · 340 M</p>
+  </div>
+  <div class="hero-copy">
+    <p class="kicker mono">TRANSMISSÃO 001 · A NOVA ERA DOS SISTEMAS</p>
+    <h1>O trabalho continua.<br><span class="gold">Você volta a viver.</span></h1>
+    <p class="lead">Sistemas que não esperam você operar. Eles executam a rotina da sua empresa todos os dias e só chamam você quando a decisão é realmente sua.</p>
+    <div class="actions">
+      <a href="#manifesto" class="btn btn-play"><span class="play" aria-hidden="true"></span>ASSISTIR AO MANIFESTO</a>
+      <a href="#iniciar" class="btn btn-gold">INICIAR MISSÃO</a>
+    </div>
+  </div>
+  <div class="telemetry mono" aria-live="off">
+    <span><i class="dot live"></i>OPERAÇÃO EM SEGUNDO PLANO</span>
+    <span id="tClock">T+ 00:00:00</span>
+    <span>TAREFAS CONCLUÍDAS <b id="tDone">0000</b></span>
+    <span id="tWait">SITUAÇÕES AGUARDANDO VOCÊ <b>0</b></span>
+  </div>
+</section>
+
+<!-- 02 · ENTROPIA REVERSA -->
+<section class="entropy" id="entropia" aria-label="Entropia reversa">
+  <div class="entropy-sticky">
+    <canvas id="entropyCanvas" aria-hidden="true"></canvas>
+    <p class="mono phase entropy-phase" id="ePhase">FASE 01 · RUÍDO</p>
+    <div class="entropy-copy">
+      <h2 class="e-line" data-from="0" data-to="0.34">Isto é o que a tecnologia fez com o seu tempo.</h2>
+      <h2 class="e-line" data-from="0.36" data-to="0.56">Agora, assista ao contrário.</h2>
+      <h2 class="e-line" data-from="0.6" data-to="1.01">Ordem. Em órbita. <span class="gold">Executando.</span></h2>
+    </div>
+    <div class="entropy-hud mono">
+      <span>PENDÊNCIAS ABERTAS <b id="eOpen">0000</b></span>
+      <span>TAREFAS EM EXECUÇÃO <b id="eRun">0000</b></span>
+      <span>TEMPO LIVRE <b id="eFree">100%</b></span>
+    </div>
+    <div class="scrub" aria-hidden="true"><i id="eBar"></i></div>
+  </div>
+</section>
+
+<!-- 03 · O IMPOSSÍVEL -->
+<section class="impossible" id="impossivel">
+  <div class="wrap">
+    <p class="label mono">/ O IMPOSSÍVEL</p>
+    <h2 class="big">Ao homem,<br>parece impossível.</h2>
+    <ol class="imp-list">
+      <li><p>Uma empresa que continua entregando enquanto o dono janta com a família.</p><span class="tag mono" data-flip>IMPOSSÍVEL</span></li>
+      <li><p>Um sistema que não pede para ser alimentado. Ele trabalha.</p><span class="tag mono" data-flip>IMPOSSÍVEL</span></li>
+      <li><p>Ser chamado só quando a decisão é realmente sua.</p><span class="tag mono" data-flip>IMPOSSÍVEL</span></li>
+      <li><p>Uma equipe que volta a pensar, em vez de só cobrar pendências.</p><span class="tag mono" data-flip>IMPOSSÍVEL</span></li>
+    </ol>
+    <blockquote class="verse">
+      <p>“Para Deus, nada é impossível.”</p>
+      <cite class="mono">LUCAS 1:37</cite>
+    </blockquote>
+  </div>
+</section>
+
+<!-- 04 · CONTROLE -->
+<section class="control" id="controle">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <p class="label mono">/ CENTRO DE CONTROLE</p>
+        <h2 class="big">Você não confere tarefas.<br>Você recebe decisões.</h2>
+      </div>
+      <p class="sec-lead">A operação roda em segundo plano. Quando algo exige você, chega pronto: o que aconteceu, as evidências, o que já foi feito e a decisão necessária.</p>
+    </div>
+    <ul class="statuses mono" id="statuses" aria-label="Estado do trabalho">
+      <li><i style="background:var(--mint)"></i>CONCLUÍDO <b data-s="done">0</b></li>
+      <li><i style="background:var(--blue)"></i>EM ANDAMENTO <b data-s="prog">0</b></li>
+      <li><i style="background:var(--amber)"></i>AGUARDANDO DECISÃO <b data-s="wait">0</b></li>
+      <li><i style="background:var(--red)"></i>BLOQUEADO <b>0</b></li>
+      <li><i style="background:var(--grey)"></i>NÃO VERIFICADO <b>0</b></li>
+    </ul>
+    <div class="console">
+      <div class="panel log-panel">
+        <div class="panel-head mono"><span><i class="dot live"></i>REGISTRO DA OPERAÇÃO</span><span id="logClock">--:--</span></div>
+        <ol class="log" id="log" aria-live="polite"></ol>
+      </div>
+      <div class="panel flag-panel" id="flagPanel">
+        <div class="panel-head mono" id="flagHead">SITUAÇÕES QUE PRECISAM DE VOCÊ</div>
+        <div class="flag-body" id="flagBody">
+          <p class="calm">Nenhuma situação aguardando você.</p>
+          <p class="calm-sub mono"><i class="dot live"></i>ACOMPANHAMENTO ATIVO</p>
+        </div>
+      </div>
+    </div>
+    <p class="note mono">SIMULAÇÃO ILUSTRATIVA DE UMA EMPRESA DE SERVIÇOS. NÃO REPRESENTA UM CLIENTE REAL.</p>
+  </div>
+</section>
+
+<!-- 05 · MISSÕES -->
+<section class="missions" id="missoes">
+  <div class="wrap">
+    <p class="label mono">/ MISSÕES</p>
+    <h2 class="big">Missões em órbita</h2>
+    <p class="sec-lead narrow">Cada sistema que construímos é uma missão: um trabalho concreto, com critério de conclusão, limites autorizados e evidência do que foi feito.</p>
+    <div class="m-grid" id="orbitList">
+      <article class="m-card">
+        <div class="m-icon" aria-hidden="true"><i></i></div>
+        <div>
+          <h3 class="mono">MISSÃO COBRANÇA</h3>
+          <p class="mono t-plus" data-start="2026-07-01T09:00:00-04:00">T+ --</p>
+          <p class="m-desc">Lembra, cobra com educação, registra pagamentos e só chama alguém quando o cliente contesta.</p>
+        </div>
+      </article>
+      <article class="m-card">
+        <div class="m-icon" aria-hidden="true"><i></i></div>
+        <div>
+          <h3 class="mono">MISSÃO AGENDA</h3>
+          <p class="mono t-plus" data-start="2026-08-12T07:30:00-04:00">T+ --</p>
+          <p class="m-desc">Confirma horários, reorganiza faltas e mantém a equipe de campo informada sem ligações.</p>
+        </div>
+      </article>
+      <article class="m-card">
+        <div class="m-icon" aria-hidden="true"><i></i></div>
+        <div>
+          <h3 class="mono">MISSÃO PÓS-VENDA</h3>
+          <p class="mono t-plus" data-start="2026-09-03T10:15:00-04:00">T+ --</p>
+          <p class="m-desc">Pede avaliação, detecta insatisfação recorrente e encaminha ao responsável certo.</p>
+        </div>
+      </article>
+    </div>
+    <p class="note mono">MISSÕES DE EXEMPLO · ILUSTRATIVAS ATÉ A PUBLICAÇÃO DE CASOS REAIS.</p>
+
+    <h2 class="big sub">Próximos lançamentos</h2>
+    <div class="m-table" role="table" aria-label="Próximos lançamentos">
+      <div class="m-row you" role="row">
+        <div role="cell"><b class="mono">SUA EMPRESA · MISSÃO 001</b><span class="mono dim">DATA A DEFINIR</span></div>
+        <div role="cell" class="r mono dim">MAPEAR · REDESENHAR · CONSTRUIR<br>EXECUTAR · ACOMPANHAR</div>
+        <div role="cell" class="r"><a href="#iniciar" class="btn btn-gold sm">RESERVAR JANELA</a></div>
+      </div>
+    </div>
+
+    <h2 class="big sub">Missões concluídas</h2>
+    <div class="m-table" role="table" aria-label="Missões concluídas">
+      <a class="m-row link" role="row" href="https://qdn-bussines-openframe.vercel.app/" target="_blank" rel="noopener">
+        <div role="cell"><b class="mono">CENTRAL QDN BUSINESS</b><span class="mono dim">OUTUBRO 2026</span></div>
+        <div role="cell" class="r mono dim">21 EMPRESAS · 21 PROPOSTAS<br>ANTES DA PRIMEIRA REUNIÃO</div>
+        <div role="cell" class="r mono gold">VER MISSÃO ↗</div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- 06 · MANIFESTO -->
+<section class="manifesto" id="manifesto">
+  <div class="wrap">
+    <p class="label mono">/ MANIFESTO</p>
+    <div class="video">
+      <video id="manifestoVideo" preload="none" playsinline controls poster="assets/manifesto-poster.jpg">
+        <source src="assets/manifesto.mp4" type="video/mp4">
+      </video>
+      <button class="video-cover" id="videoCover" type="button" aria-label="Assistir ao manifesto com som">
+        <span class="play big-play" aria-hidden="true"></span>
+        <span class="mono">ASSISTIR AO MANIFESTO · 1MIN37 · COM SOM</span>
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- 07 · MÉTODO -->
+<section class="method" id="metodo">
+  <div class="wrap">
+    <p class="label mono">/ SEQUÊNCIA DE LANÇAMENTO</p>
+    <h2 class="big">Antes de automatizar,<br>a gente redesenha.</h2>
+    <ol class="steps">
+      <li><span class="mono t">T−04</span><b>MAPEAR</b><p>Entendemos a operação real: tarefas, decisões, atrasos, retrabalho e tudo que hoje depende de cobrança.</p></li>
+      <li><span class="mono t">T−03</span><b>REDESENHAR</b><p>Cortamos etapas desnecessárias, simplificamos o fluxo e definimos quem responde por cada exceção.</p></li>
+      <li><span class="mono t">T−02</span><b>CONSTRUIR</b><p>Conectamos as ferramentas que você já usa e desenvolvemos o que falta para o processo andar sozinho.</p></li>
+      <li class="ignite"><span class="mono t">T−00 · IGNIÇÃO</span><b>EXECUTAR</b><p>O sistema realiza tarefas, acompanha compromissos e registra resultados dentro dos limites que você autorizou.</p></li>
+      <li><span class="mono t">T+ EM ÓRBITA</span><b>ACOMPANHAR</b><p>Medimos se o sistema está devolvendo tempo e melhorando a operação, e ajustamos o que for preciso.</p></li>
+    </ol>
+    <div class="autonomy">
+      <div><span class="mono a-tag" style="--c:var(--mint)"><i></i>EXECUTA SOZINHO</span><b>A rotina aprovada.</b><p>Lembretes, confirmações, registros, follow-ups e conciliações seguem as regras que você definiu.</p></div>
+      <div><span class="mono a-tag" style="--c:var(--blue)"><i></i>PEDE AUTORIZAÇÃO</span><b>O que é sensível.</b><p>Gastos fora do padrão, exceções comerciais e qualquer ação fora dos limites esperam o responsável aprovar.</p></div>
+      <div><span class="mono a-tag" style="--c:var(--amber)"><i></i>CHAMA VOCÊ</span><b>O que é seu.</b><p>Primeiro o responsável certo. O dono recebe apenas o que exige a participação dele, com tudo pronto para decidir.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 08 · INICIAR -->
+<section class="launch" id="iniciar">
+  <div class="wrap narrow-wrap">
+    <p class="label mono">/ INICIAR MISSÃO</p>
+    <h2 class="big">Que trabalho podemos assumir na sua empresa?</h2>
+    <form id="launchForm" class="form" novalidate>
+      <div class="row2">
+        <div class="field"><label for="fName" class="mono">SEU NOME</label><input id="fName" name="nome" autocomplete="name" required></div>
+        <div class="field"><label for="fCompany" class="mono">EMPRESA</label><input id="fCompany" name="empresa" autocomplete="organization"></div>
+      </div>
+      <div class="field"><label for="fTask" class="mono">A TAREFA QUE MAIS CONSOME O SEU TEMPO</label>
+        <textarea id="fTask" name="tarefa" rows="4" required placeholder="Ex.: todo dia alguém precisa cobrar clientes, confirmar agenda e atualizar planilhas…"></textarea></div>
+      <div class="form-foot">
+        <p class="dim">Respondemos com uma leitura inicial do que pode ser assumido.</p>
+        <button type="submit" class="btn btn-gold lg" id="launchBtn">INICIAR MISSÃO</button>
+      </div>
+      <p class="form-msg mono" id="formMsg" role="status"></p>
+    </form>
+  </div>
+</section>
+</main>
+
+<footer class="foot">
+  <div class="foot-brand"><img src="assets/logo.webp" alt="" width="28" height="29"><span class="mono">OPENFRAME · STUDIO DE SISTEMAS</span></div>
+  <span class="mono dim">ALEXANDRE NARDI &amp; JANE NARDI · FUNDADORES</span>
+  <span class="mono dim">© 2026 · STUDIOOPENFRAME.COM</span>
+</footer>
+
+<!-- AUTOPILOTO -->
+<div class="autopilot mono" id="autopilot" aria-hidden="true">
+  <div class="ap-head"><i class="dot live"></i>PILOTO AUTOMÁTICO · VOCÊ PAROU, A OPENFRAME ASSUMIU</div>
+  <ol class="ap-log" id="apLog"></ol>
+</div>
+<div class="return-toast" id="returnToast" role="status" aria-live="polite" hidden>
+  <p class="mono gold" id="rtTitle">BEM-VINDO DE VOLTA</p>
+  <p id="rtText"></p>
+  <p class="mono dim rt-note">SIMULAÇÃO. NA SUA EMPRESA, SERIAM TAREFAS REAIS.</p>
+  <button type="button" class="btn btn-line sm" id="rtClose">CONTINUAR</button>
+</div>
+
+<script src="app.js" defer></script>
+</body>
+</html>

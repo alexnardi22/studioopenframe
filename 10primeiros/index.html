@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Seja um dos 10 | Alexandre Nardi</title>
+<meta name="description" content="IA para empresário brasileiro vender mais nos EUA. 10 vagas de fundador.">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#050608">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="pt_BR">
+<meta property="og:title" content="Seja um dos 10 | Alexandre Nardi">
+<meta property="og:description" content="IA para empresário brasileiro vender mais nos EUA. 10 vagas de fundador.">
+<link rel="preload" href="/assets/fonts/D-DIN-PRO-700-Bold.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/10primeiros/style.css">
+</head>
+<body>
+<main class="page">
+
+  <header class="who">
+    <div class="avatar" aria-hidden="true">
+      <span class="initials">AN</span>
+      <img src="/10primeiros/alexandre.jpg" alt="" width="96" height="96" id="photo">
+    </div>
+    <div>
+      <p class="name">Alexandre Nardi</p>
+      <p class="cred">20+ anos em tecnologia | Orlando, FL</p>
+    </div>
+  </header>
+
+  <h1>Seu cliente americano liga. Você atende em português. <span class="accent">Ele ouve em inglês.</span></h1>
+
+  <p class="sub">Estou selecionando 10 empresários brasileiros nos EUA para testar comigo uma solução de IA que atende, traduz e organiza seus clientes. Condição de fundador só para esses 10.</p>
+
+  <ul class="points">
+    <li><b>Nunca mais perca uma ligação:</b> a IA atende em inglês quando você não pode.</li>
+    <li><b>Fale português:</b> o cliente ouve tudo em inglês, em tempo real.</li>
+    <li><b>Receba o resumo de cada cliente</b> em português no seu WhatsApp.</li>
+  </ul>
+
+  <section class="box" id="box" aria-live="polite">
+    <form id="form" novalidate>
+      <p class="seats"><span class="seat-dots" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>10 vagas de fundador</p>
+
+      <div class="field">
+        <label for="nome">Nome completo</label>
+        <input id="nome" name="nome" autocomplete="name" required maxlength="120">
+        <p class="err" id="e-nome">Digite seu nome completo.</p>
+      </div>
+
+      <div class="field">
+        <label for="whatsapp">WhatsApp</label>
+        <div class="phone">
+          <label class="sr" for="ddi">Código do país</label>
+          <select id="ddi" name="ddi" autocomplete="tel-country-code">
+            <option value="1" selected>EUA +1</option>
+            <option value="55">Brasil +55</option>
+            <option value="351">Portugal +351</option>
+            <option value="52">México +52</option>
+            <option value="34">Espanha +34</option>
+            <option value="44">Reino Unido +44</option>
+          </select>
+          <input id="whatsapp" name="whatsapp" type="tel" inputmode="numeric" autocomplete="tel-national" required placeholder="407 555 0199" maxlength="20">
+        </div>
+        <p class="err" id="e-whatsapp">Digite um WhatsApp válido, só com números (mínimo 10 dígitos).</p>
+      </div>
+
+      <div class="field">
+        <label for="tipo">Tipo de empresa</label>
+        <select id="tipo" name="tipo_empresa" required>
+          <option value="" selected disabled>Selecione</option>
+          <option>Limpeza</option>
+          <option>Construção/Reformas</option>
+          <option>Pintura</option>
+          <option>Landscaping</option>
+          <option>Pisos</option>
+          <option>Mudanças</option>
+          <option>Estética/Beleza</option>
+          <option>Outro</option>
+        </select>
+        <p class="err" id="e-tipo">Escolha o tipo de empresa.</p>
+      </div>
+
+      <div class="field">
+        <label for="cidade">Cidade e estado</label>
+        <input id="cidade" name="cidade_estado" autocomplete="address-level2" required maxlength="120" placeholder="Orlando, FL">
+        <p class="err" id="e-cidade">Digite sua cidade e estado.</p>
+      </div>
+
+      <div class="field">
+        <label for="dificuldade">Qual sua maior dificuldade com clientes americanos hoje? <span class="opt">(opcional)</span></label>
+        <textarea id="dificuldade" name="dificuldade" rows="3" maxlength="2000"></textarea>
+      </div>
+
+      <div class="hp" aria-hidden="true"><label for="empresa_site">Não preencha</label><input id="empresa_site" name="empresa_site" tabindex="-1" autocomplete="off"></div>
+
+      <label class="consent" for="consent">
+        <input type="checkbox" id="consent" name="consentimento" required>
+        <span>Concordo em ser contatado por WhatsApp, ligação ou SMS sobre esta iniciativa.</span>
+      </label>
+      <p class="err" id="e-consent">Marque para podermos falar com você.</p>
+
+      <button type="submit" class="cta" id="cta">Quero ser um dos 10</button>
+      <p class="form-msg" id="msg" role="alert"></p>
+    </form>
+
+    <div class="done" id="done" hidden tabindex="-1">
+      <p class="done-mark" aria-hidden="true"></p>
+      <p class="done-text" id="doneText">Recebido. Eu vou falar pessoalmente com cada pessoa da lista. Fique de olho no seu WhatsApp.</p>
+      <a class="ghost" href="https://instagram.com/alexnardi" target="_blank" rel="noopener">Me siga no Instagram</a>
+    </div>
+  </section>
+
+</main>
+<script src="/10primeiros/app.js" defer></script>
+</body>
+</html>

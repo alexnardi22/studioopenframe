@@ -39,6 +39,15 @@
           "value": "no-store"
         }
       ]
+    },
+    {
+      "source": "/10primeiros(.*)",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
+      ]
     }
   ]
 }

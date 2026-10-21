@@ -29,6 +29,21 @@ module.exports = async (req, res) => {
       return res.status(fails > 15 ? 429 : 401).json({ ok: false, error: fails > 15 ? 'locked' : 'auth' });
     }
 
+    const lista10 = (req.query && req.query.lista === '10') || /[?&]lista=10\b/.test(req.url || '');
+    if (lista10 && req.method === 'GET') {
+      const nums = (await pipeline([['ZREVRANGE', 'waitlist_10primeiros', 0, 999]]))[0] || [];
+      if (!nums.length) return res.status(200).json({ ok: true, lista: [] });
+      const vals = (await pipeline([['MGET', ...nums.map(n => 'w10:' + n)]]))[0] || [];
+      const lista = vals.map(v => { try { return JSON.parse(v); } catch (_) { return null; } }).filter(Boolean);
+      return res.status(200).json({ ok: true, lista });
+    }
+    if (lista10 && req.method === 'DELETE') {
+      const w = String(readBody(req).whatsapp || '').replace(/\D/g, '').slice(0, 15);
+      if (!w) return res.status(400).json({ ok: false, error: 'whatsapp' });
+      await pipeline([['DEL', 'w10:' + w], ['ZREM', 'waitlist_10primeiros', w]]);
+      return res.status(200).json({ ok: true });
+    }
+
     if (req.method === 'GET') {
       const ids = (await pipeline([['ZREVRANGE', 'missoes', 0, 999]]))[0] || [];
       if (!ids.length) return res.status(200).json({ ok: true, missoes: [] });

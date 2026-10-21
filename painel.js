@@ -230,5 +230,67 @@
     document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);
   });
 
+  // ───────── LISTA DOS 10 ─────────
+  let lista10 = [], mode = 'missoes';
+  async function loadL10() {
+    const r = await fetch(API + '?lista=10', { headers: { Authorization: 'Bearer ' + (senha || '') } });
+    const d = await r.json().catch(() => ({}));
+    if (!r.ok) { const e = new Error(d.error || r.status); e.status = r.status; e.data = d; throw e; }
+    lista10 = d.lista || []; renderL10();
+  }
+  const fmtWa = n => n.length === 11 && n[0] === '1' ? `+1 (${n.slice(1, 4)}) ${n.slice(4, 7)}-${n.slice(7)}` : '+' + n;
+  function renderL10() {
+    $('#l10count').textContent = `${lista10.length}/10`;
+    $('#l10total').textContent = lista10.length;
+    const ol = $('#l10list'); ol.innerHTML = '';
+    $('#l10empty').hidden = lista10.length > 0;
+    const ordered = lista10.slice().sort((a, b) => a.created_at < b.created_at ? -1 : 1);
+    ordered.forEach((w, i) => {
+      const li = document.createElement('li'); li.className = 'l10-card';
+      li.innerHTML = `<div class="l10-top"><span class="l10-num">Nº ${String(i + 1).padStart(2, '0')}</span><span class="l10-when"></span></div>
+        <p class="l10-name"></p><p class="l10-meta"></p><span class="l10-wa"></span><p class="l10-diff" hidden></p>
+        <div class="l10-actions"><a class="btn btn-gold sm" target="_blank" rel="noopener">WHATSAPP</a><button type="button" class="btn btn-line sm cp">COPIAR</button><button type="button" class="btn btn-danger sm del">REMOVER</button></div>`;
+      li.querySelector('.l10-when').textContent = ago(Date.parse(w.created_at));
+      li.querySelector('.l10-name').textContent = w.nome;
+      const meta = li.querySelector('.l10-meta'); meta.textContent = `${w.tipo_empresa} · ${w.cidade_estado} `;
+      if (w.origem) { const s2 = document.createElement('span'); s2.className = 'l10-src'; s2.textContent = w.origem; meta.append(s2); }
+      li.querySelector('.l10-wa').textContent = fmtWa(w.whatsapp);
+      if (w.dificuldade) { const d = li.querySelector('.l10-diff'); d.hidden = false; d.textContent = w.dificuldade; }
+      const first = (w.nome || '').split(' ')[0];
+      li.querySelector('a').href = `https://wa.me/${w.whatsapp}?text=${encodeURIComponent(`Oi ${first}, aqui é o Alexandre Nardi. Vi que você entrou na lista dos 10 empresários fundadores. Podemos conversar?`)}`;
+      const cp = li.querySelector('.cp');
+      cp.addEventListener('click', async () => { try { await navigator.clipboard.writeText('+' + w.whatsapp); cp.textContent = 'COPIADO ✓'; } catch (_) { cp.textContent = 'SELECIONE E COPIE'; } setTimeout(() => cp.textContent = 'COPIAR', 1800); });
+      const del = li.querySelector('.del');
+      del.addEventListener('click', async () => {
+        if (del.dataset.armed !== '1') { del.dataset.armed = '1'; del.textContent = 'CONFIRMAR REMOÇÃO'; setTimeout(() => { del.dataset.armed = ''; del.textContent = 'REMOVER'; }, 4000); return; }
+        try {
+          const r = await fetch(API + '?lista=10', { method: 'DELETE', headers: { Authorization: 'Bearer ' + senha, 'Content-Type': 'application/json' }, body: JSON.stringify({ whatsapp: w.whatsapp }) });
+          if (r.ok) { lista10 = lista10.filter(x => x.whatsapp !== w.whatsapp); renderL10(); }
+        } catch (_) {}
+      });
+      ol.append(li);
+    });
+  }
+  function setMode(m) {
+    mode = m;
+    $$('.tab').forEach(t => t.classList.toggle('on', t.dataset.tab === m));
+    $('#l10').hidden = m !== 'lista10';
+    $('#app').classList.toggle('mode-l10', m === 'lista10');
+    if (m === 'lista10') loadL10().catch(handleErr);
+  }
+  $$('.tab').forEach(t => t.addEventListener('click', () => setMode(t.dataset.tab)));
+  $('#l10csv').addEventListener('click', () => {
+    const esc = v => `"${String(v == null ? '' : v).replace(/"/g, '""')}"`;
+    const head = ['Inscrito em', 'Nome', 'WhatsApp', 'Tipo de empresa', 'Cidade e estado', 'Dificuldade', 'Origem'];
+    const rows = lista10.map(w => [new Date(w.created_at).toLocaleString('pt-BR'), w.nome, '+' + w.whatsapp, w.tipo_empresa, w.cidade_estado, w.dificuldade, w.origem].map(esc).join(','));
+    const blob = new Blob(['\ufeff' + [head.map(esc).join(',')].concat(rows).join('\n')], { type: 'text/csv;charset=utf-8' });
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `lista-10-primeiros-${new Date().toISOString().slice(0, 10)}.csv`;
+    document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+  });
+  // contador da aba já no login, e atualização junto com as missões
+  const _load = load;
+  load = async function () { await _load(); loadL10().catch(() => {}); };
+  if (/[#&]lista10\b/.test(location.hash)) setTimeout(() => setMode('lista10'), 0);
+
   boot();
 })();

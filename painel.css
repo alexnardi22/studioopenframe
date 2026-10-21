@@ -115,3 +115,28 @@ code{background:var(--panel2);padding:1px 6px;font-size:14px}
   .app.show-detail .detail{display:block}
   .d-back{display:inline-flex}
 }
+
+/* abas + lista dos 10 */
+.tabs{display:flex;gap:0;border-bottom:1px solid var(--line);padding:0 var(--pad)}
+.tab{background:none;border:0;border-bottom:2px solid transparent;padding:14px 16px;font-size:12px;letter-spacing:.16em;color:var(--ink3);cursor:pointer;min-height:48px}
+.tab:hover{color:var(--ink)}
+.tab.on{color:var(--ink);border-bottom-color:var(--gold)}
+.tab b{margin-left:8px;color:var(--gold);font-weight:500}
+.app.mode-l10 .kpis,.app.mode-l10 .toolbar,.app.mode-l10 .split{display:none}
+.l10{padding:22px var(--pad) 48px}
+.l10-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:14px;margin-bottom:18px}
+.l10-head p{margin:0 0 6px}
+.l10-head h2{margin:0;font-size:clamp(24px,3vw,34px);text-transform:uppercase;letter-spacing:.02em}
+.l10-list{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,360px),1fr));gap:12px}
+.l10-card{background:var(--panel);border:1px solid var(--line);padding:18px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.l10-top{display:flex;justify-content:space-between;gap:10px;align-items:baseline}
+.l10-num{color:var(--gold);font-size:12px;letter-spacing:.14em}
+.l10-when{color:var(--ink3);font-size:11px;letter-spacing:.1em;white-space:nowrap}
+.l10-name{margin:0;font-size:21px;font-weight:700;line-height:1.15}
+.l10-meta{margin:0;color:var(--ink2);font-size:15px}
+.l10-diff{margin:0;font-size:15px;color:var(--ink2);border-left:2px solid var(--line2);padding-left:10px;white-space:pre-wrap}
+.l10-wa{font-size:17px;user-select:all;word-break:break-all}
+.l10-actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.l10-actions .del{margin-left:auto}
+.l10-src{display:inline-block;font-size:10px;letter-spacing:.14em;border:1px solid var(--line2);padding:2px 6px;color:var(--ink3)}
+.empty-l10{color:var(--ink2);max-width:460px}

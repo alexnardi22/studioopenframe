@@ -14,7 +14,7 @@ module.exports = async (req, res) => {
   if (!configured()) return res.status(503).json({ ok: false, error: 'storage_not_configured' });
 
   const b = readBody(req);
-  if (b._honey) return res.status(200).json({ ok: true }); // robô: finge sucesso
+  const suspeito = Boolean(b._honey); // não descarta: só marca
 
   const m = {
     nome: clip(b.nome, 120),
@@ -37,7 +37,7 @@ module.exports = async (req, res) => {
     try { cidade = decodeURIComponent(req.headers['x-vercel-ip-city'] || ''); } catch (_) {}
     const rec = {
       id, ...m,
-      status: 'nova', notas: '',
+      status: 'nova', notas: '', ...(suspeito ? { suspeito: true } : {}),
       criado: now, atualizado: now,
       pais: clip(req.headers['x-vercel-ip-country'], 8),
       regiao: clip(req.headers['x-vercel-ip-country-region'], 16),

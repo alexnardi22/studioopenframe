@@ -297,7 +297,6 @@
     const nome = $('#fName').value.trim(), empresa = $('#fCompany').value.trim(), contato = $('#fContact').value.trim(), tarefa = $('#fTask').value.trim();
     const missing = !nome ? '#fName' : !contato ? '#fContact' : !tarefa ? '#fTask' : null;
     if (missing) { msg.textContent = 'PREENCHA NOME, CONTATO E A TAREFA, POR FAVOR.'; $(missing).focus(); return; }
-    if ($('#fHp').value) { msg.textContent = 'MISSÃO RECEBIDA.'; form.reset(); return; }
     const btn = $('#launchBtn'); btn.disabled = true; btn.textContent = 'TRANSMITINDO…'; msg.textContent = '';
     const quando = new Date().toLocaleString('pt-BR', { timeZone: 'America/New_York' });
     // 1) salva no banco do site (Painel de Missões)  2) aviso por e-mail (FormSubmit), em paralelo

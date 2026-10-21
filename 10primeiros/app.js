@@ -58,7 +58,7 @@
           nome: v.data.nome, whatsapp: v.data.whatsapp,
           tipo_empresa: $('tipo').value, cidade_estado: $('cidade').value.trim(),
           dificuldade: $('dificuldade').value.trim(), consentimento: true,
-          origem, empresa_site: $('empresa_site').value
+          origem, hp_x9: $('hp_x9').value
         })
       });
       const d = await r.json().catch(() => ({}));
@@ -66,7 +66,7 @@
       if (r.status === 409 || d.error === 'duplicate') return showDone('Esse WhatsApp já está na lista. Eu vou falar pessoalmente com cada pessoa. Fique de olho no seu WhatsApp.');
       if (d.error === 'invalid') { msg.textContent = 'Confira os campos destacados e tente de novo.'; (d.campos || []).forEach(c => { const el = $({ tipo_empresa: 'tipo', cidade_estado: 'cidade' }[c] || c); if (el) mark(el, true); }); }
       else if (r.status === 429) msg.textContent = 'Muitas tentativas seguidas. Espere alguns minutos e tente de novo.';
-      else msg.textContent = 'Não foi possível enviar agora. Tente de novo em instantes.';
+      else msg.textContent = 'Não foi possível enviar agora (' + (d.error || r.status) + '). Tente de novo em instantes.';
     } catch (_) {
       msg.textContent = 'Sem conexão. Confira sua internet e tente de novo.';
     }

@@ -13,7 +13,7 @@ module.exports = async (req, res) => {
   if (!configured()) return res.status(503).json({ ok: false, error: 'not_configured' });
 
   const b = readBody(req);
-  if (b.empresa_site) return res.status(200).json({ ok: true }); // campo-isca para robôs
+  const suspeito = Boolean(b.hp_x9); // campo-isca: não descarta, só marca (autopreenchimento do celular pode preenchê-lo)
 
   const nome = clip(b.nome, 120);
   const whatsapp = String(b.whatsapp || '').replace(/\D/g, '');
@@ -40,7 +40,8 @@ module.exports = async (req, res) => {
     const now = Date.now();
     const rec = {
       id: crypto.randomUUID(), created_at: new Date(now).toISOString(),
-      nome, whatsapp, tipo_empresa, cidade_estado, dificuldade, consentimento, origem
+      nome, whatsapp, tipo_empresa, cidade_estado, dificuldade, consentimento, origem,
+      ...(suspeito ? { suspeito: true } : {})
     };
     // SET NX: grava só se esse WhatsApp ainda não estiver na lista (impede duplicado)
     const [set] = await pipeline([['SET', 'w10:' + whatsapp, JSON.stringify(rec), 'NX']]);
@@ -49,6 +50,6 @@ module.exports = async (req, res) => {
     return res.status(200).json({ ok: true });
   } catch (err) {
     console.error('10primeiros', err);
-    return res.status(500).json({ ok: false, error: 'storage' });
+    return res.status(500).json({ ok: false, error: 'storage', detail: String(err && err.message || err).slice(0, 200) });
   }
 };

@@ -1,4 +1,4 @@
-// POST /api/10primeiros — lista de espera "Seja um dos 10".
+// POST /api/lista10 — lista de espera "Seja um dos 10".
 // Grava no mesmo banco do site (Upstash Redis). Esta rota só insere: não existe leitura pública.
 // Os inscritos aparecem no Painel (/painel → aba "Lista dos 10"), protegido por senha.
 const crypto = require('crypto');

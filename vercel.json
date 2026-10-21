@@ -49,5 +49,15 @@
         }
       ]
     }
+  ],
+  "rewrites": [
+    {
+      "source": "/10primeiros",
+      "destination": "/10primeiros/index.html"
+    },
+    {
+      "source": "/10primeiros/",
+      "destination": "/10primeiros/index.html"
+    }
   ]
 }

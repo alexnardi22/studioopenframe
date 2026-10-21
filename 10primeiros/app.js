@@ -52,7 +52,7 @@
     if (!v.ok) { v.first.focus(); return; }
     sending = true; cta.disabled = true; cta.textContent = 'Enviando…';
     try {
-      const r = await fetch('/api/10primeiros', {
+      const r = await fetch('/api/lista10', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           nome: v.data.nome, whatsapp: v.data.whatsapp,

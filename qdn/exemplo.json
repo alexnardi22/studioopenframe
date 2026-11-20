@@ -1,0 +1,58 @@
+{
+  "slug": "exemplo",
+  "exemplo": true,
+  "empresa": "Aurora Home Services",
+  "contato_nome": "Marina",
+  "ramo": "Serviços para casas · limpeza residencial",
+  "cidade": "Orlando, FL",
+  "resumo": "A Aurora faz limpeza residencial recorrente com 6 equipes. A Marina passa boa parte do dia no WhatsApp: responde pedidos de orçamento, confirma horários com clientes, avisa as equipes sobre mudanças e cobra pagamentos atrasados. Quando ela para, a operação para junto. O mapa abaixo mostra o que pode sair das mãos dela e passar a acontecer em segundo plano, com regras que ela aprova.",
+  "tarefas": [
+    {
+      "titulo": "Responder pedidos de orçamento",
+      "hoje": "Marina responde cada mensagem, pergunta tamanho da casa e frequência e calcula o preço na cabeça.",
+      "como": "Um atendente no WhatsApp faz as perguntas certas, calcula pela tabela da Aurora e envia o orçamento. Casos fora da tabela vão para ela.",
+      "autonomia": "sozinho"
+    },
+    {
+      "titulo": "Confirmar a agenda do dia seguinte",
+      "hoje": "Toda noite ela manda mensagem para cada cliente e espera resposta.",
+      "como": "O sistema confirma às 18h, remarca dentro das janelas livres e avisa a equipe. Quem não respondeu até as 20h aparece no resumo.",
+      "autonomia": "sozinho"
+    },
+    {
+      "titulo": "Cobrar pagamentos em atraso",
+      "hoje": "Ela lembra de cobrar quando sobra tempo, e às vezes esquece.",
+      "como": "Lembretes automáticos no 1º e no 3º dia. A partir do 7º dia, o sistema prepara a mensagem e pede a autorização dela antes de enviar.",
+      "autonomia": "autoriza"
+    },
+    {
+      "titulo": "Aplicar descontos e exceções",
+      "hoje": "Cada cliente negocia direto com ela.",
+      "como": "O sistema nunca decide preço fora da tabela. Ele junta o histórico do cliente e leva a decisão para a Marina com uma recomendação.",
+      "autonomia": "voce"
+    }
+  ],
+  "dia": [
+    { "hora": "07:30", "texto": "Rotas das 6 equipes enviadas no WhatsApp de cada líder", "tipo": "concluido" },
+    { "hora": "09:12", "texto": "Orçamento enviado para novo cliente em Winter Park", "tipo": "concluido" },
+    { "hora": "11:40", "texto": "Cliente pediu para remarcar. Nova data proposta, aguardando resposta", "tipo": "andamento" },
+    { "hora": "14:05", "texto": "Pagamento com 8 dias de atraso. Mensagem pronta, aguardando sua autorização", "tipo": "decisao" },
+    { "hora": "16:20", "texto": "Agenda não sincronizou com o Google Calendar. Equipe avisada pelo WhatsApp", "tipo": "bloqueado" },
+    { "hora": "18:00", "texto": "Confirmações de amanhã enviadas: 14 de 16 responderam", "tipo": "concluido" },
+    { "hora": "20:00", "texto": "2 clientes sem resposta. Não foi possível confirmar presença", "tipo": "nao_verificado" }
+  ],
+  "red_flags": [
+    { "titulo": "Cliente reclamou duas vezes no mês", "exemplo": "O sistema mostra as duas mensagens, a equipe que atendeu e sugere ligar antes da próxima visita.", "para": "Marina" },
+    { "titulo": "Equipe sem condições de cumprir a agenda", "exemplo": "Uma líder avisou que está doente às 6h. O sistema já separou quais visitas dá para remanejar e quais precisam de decisão.", "para": "Coordenadora de equipes" },
+    { "titulo": "Pedido fora da tabela", "exemplo": "Casa de 6 quartos com limpeza pós-obra. O orçamento precisa de uma pessoa.", "para": "Marina" }
+  ],
+  "horas_semana_atual": "20 a 40",
+  "estimativa_horas": { "min": 8, "max": 14 },
+  "indicadores": [
+    "Horas por semana que a Marina passa no WhatsApp",
+    "Tempo entre o pedido e o envio do orçamento",
+    "Visitas perdidas por falta de confirmação",
+    "Dias médios para receber um pagamento"
+  ],
+  "primeiro_passo": "Uma conversa de 40 minutos para conferir a tabela de preços, as regras de remarcação e quem decide cada exceção. A partir disso, o atendimento de orçamentos é o primeiro trabalho a ser assumido."
+}

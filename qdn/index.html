@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mapa da Missão | OpenFrame × QDN Business</title>
+<meta name="description" content="O mapa do trabalho que pode ser assumido na sua empresa. Contagem Regressiva · OpenFrame × QDN Business.">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#050608">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="pt_BR">
+<meta property="og:title" content="Mapa da Missão · OpenFrame × QDN Business">
+<meta property="og:description" content="O trabalho que pode sair das suas mãos e passar a acontecer em segundo plano.">
+<meta property="og:image" content="https://www.studioopenframe.com/assets/og.jpg">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<link rel="preload" href="/assets/fonts/D-DIN-PRO-700-Bold.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/contagem/style.css">
+<link rel="stylesheet" href="/qdn/style.css">
+</head>
+<body>
+<canvas id="stars" aria-hidden="true"></canvas>
+
+<header class="top">
+  <a class="brand" href="/contagem"><img src="/assets/logo.webp" alt="" width="30" height="31"><span>OPENFRAME</span><i aria-hidden="true">×</i><span class="qdn">QDN BUSINESS</span></a>
+  <span class="mono dim">MAPA DA MISSÃO</span>
+</header>
+
+<p class="flag mono" id="flag" hidden></p>
+
+<main>
+  <!-- CARREGANDO -->
+  <section class="state" id="sLoading"><p class="mono dim">CARREGANDO A MISSÃO…</p></section>
+
+  <!-- TRAVADO ATÉ O EVENTO -->
+  <section class="state hero" id="sLocked" hidden>
+    <img class="hero-logo" src="/assets/logo.webp" alt="OpenFrame" width="96" height="98">
+    <p class="mono kicker">MAPA DA MISSÃO · CONTAGEM REGRESSIVA</p>
+    <h1 class="h1-sm">Sua missão<br>está na plataforma</h1>
+    <p class="slogan">Este mapa foi preparado para a sua empresa e <span class="gold">é liberado na noite do evento.</span></p>
+    <div class="clock" id="clock" role="timer" aria-label="Tempo até a liberação">
+      <div><b id="cd-d">00</b><span class="mono">DIAS</span></div>
+      <div><b id="cd-h">00</b><span class="mono">HORAS</span></div>
+      <div><b id="cd-m">00</b><span class="mono">MIN</span></div>
+      <div><b id="cd-s">00</b><span class="mono">SEG</span></div>
+    </div>
+    <p class="mono when">02 DE DEZEMBRO · QUARTA-FEIRA · 7PM (ORLANDO) · ONLINE</p>
+    <div class="hero-cta"><a class="btn btn-line" href="/qdn/exemplo">VER UM MAPA DE EXEMPLO</a></div>
+  </section>
+
+  <!-- NÃO ENCONTRADO -->
+  <section class="state hero" id="sMissing" hidden>
+    <p class="mono kicker">SINAL PERDIDO</p>
+    <h1 class="h1-sm">Mapa não encontrado</h1>
+    <p class="slogan">Confira se o link está completo. Se o problema continuar, fale com a equipe da OpenFrame.</p>
+    <div class="hero-cta"><a class="btn btn-line" href="/contagem">VOLTAR PARA A CONTAGEM REGRESSIVA</a></div>
+  </section>
+
+  <!-- MAPA -->
+  <article id="sMap" hidden>
+    <section class="m-hero">
+      <p class="mono gold">MAPA DA MISSÃO · 001</p>
+      <h1 id="mEmpresa"></h1>
+      <p class="mono dim" id="mMeta"></p>
+      <p class="m-resumo" id="mResumo"></p>
+      <p class="m-q">A pergunta que guiou este mapa: <b>que trabalho pode sair das suas mãos para a empresa entregar melhor e você ter mais tempo para viver?</b></p>
+    </section>
+
+    <section class="block">
+      <p class="mono label">01 · O TRABALHO QUE PODE SER ASSUMIDO</p>
+      <h2>O que sai das suas mãos</h2>
+      <p class="lead">Cada tarefa tem um nível de autonomia definido. O que é rotina acontece sozinho, dentro das regras que você aprova. O que é sensível espera a sua decisão.</p>
+      <div class="legend mono">
+        <span><i class="a-sozinho"></i>EXECUTA SOZINHO</span>
+        <span><i class="a-autoriza"></i>PEDE AUTORIZAÇÃO</span>
+        <span><i class="a-voce"></i>LEVA A DECISÃO PARA VOCÊ</span>
+      </div>
+      <ol class="tasks" id="mTarefas"></ol>
+    </section>
+
+    <section class="block" id="bDia">
+      <p class="mono label">02 · UM DIA EM SEGUNDO PLANO</p>
+      <h2>Enquanto você vive o seu dia</h2>
+      <p class="lead">Simulação de um dia de operação com as tarefas da sua empresa. Você não precisa entrar para conferir: recebe um resumo opcional e é chamado só quando precisa.</p>
+      <div class="cc" id="cc">
+        <div class="cc-head mono"><span><i class="live"></i>CENTRO DE CONTROLE</span><span id="ccEmpresa"></span></div>
+        <ol class="cc-log" id="mDia"></ol>
+      </div>
+      <p class="note mono">SIMULAÇÃO ILUSTRATIVA. OS HORÁRIOS E EVENTOS SÃO EXEMPLOS BASEADOS NO RAIO-X.</p>
+    </section>
+
+    <section class="block" id="bFlags">
+      <p class="mono label">03 · SITUAÇÕES QUE PRECISAM DE VOCÊ</p>
+      <h2>Você é chamado quando importa</h2>
+      <p class="lead">Cada alerta chega com o que aconteceu, as evidências, o que já foi feito e a decisão necessária. Ele vai primeiro para o responsável certo. Você recebe o que exige a sua participação.</p>
+      <ol class="flags" id="mFlags"></ol>
+    </section>
+
+    <section class="block" id="bTempo">
+      <p class="mono label">04 · O TEMPO EM JOGO</p>
+      <h2>O tempo que pode voltar</h2>
+      <div class="time">
+        <div class="time-box"><span class="mono dim">HOJE, EM TAREFAS REPETITIVAS</span><b id="mHoje"></b><span class="mono dim">POR SEMANA · INFORMADO NO RAIO-X</span></div>
+        <div class="time-box gold-b" id="tEst"><span class="mono gold">PODE VOLTAR PARA VOCÊ</span><b id="mEst"></b><span class="mono dim">POR SEMANA · ESTIMATIVA</span></div>
+      </div>
+      <p class="note mono">ESTIMATIVA ILUSTRATIVA, FEITA A PARTIR DO RAIO-X. O NÚMERO REAL SÓ SE CONFIRMA NO DIAGNÓSTICO E COM A OPERAÇÃO RODANDO.</p>
+      <div id="bInd">
+        <p class="mono label ind-label">O QUE VAMOS MEDIR</p>
+        <ul class="ind" id="mInd"></ul>
+      </div>
+    </section>
+
+    <section class="block" id="bPasso">
+      <p class="mono label">05 · PRIMEIRO PASSO</p>
+      <h2>Por onde a missão começa</h2>
+      <p class="lead" id="mPasso"></p>
+    </section>
+
+    <section class="block emb-block">
+      <div class="emb-text">
+        <p class="mono label">EMBLEMA DA MISSÃO</p>
+        <h2>Missão 001</h2>
+        <p class="lead">O emblema da sua empresa na Contagem Regressiva. Baixe e compartilhe.</p>
+        <div class="emb-actions">
+          <button class="btn btn-gold" type="button" id="embDown">BAIXAR EMBLEMA</button>
+        </div>
+      </div>
+      <canvas id="emb" width="1080" height="1080" aria-label="Emblema da Missão 001"></canvas>
+    </section>
+
+    <section class="block cta-block">
+      <h2>Quer colocar esta missão em execução?</h2>
+      <p class="lead">O mapa é o ponto de partida. O próximo passo é um diagnóstico da operação real, para confirmar o que pode ser assumido e em que ordem.</p>
+      <div class="hero-cta left"><a class="btn btn-gold lg" id="cta" href="/#iniciar">QUERO INICIAR A MISSÃO</a></div>
+    </section>
+  </article>
+</main>
+
+<footer class="foot mono dim">
+  <span>STUDIO OPENFRAME · STUDIO DE SISTEMAS</span>
+  <span>ALEXANDRE NARDI &amp; JANE NARDI</span>
+</footer>
+
+<script src="/qdn/app.js" defer></script>
+</body>
+</html>

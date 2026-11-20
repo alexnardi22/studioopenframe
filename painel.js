@@ -325,13 +325,77 @@
     document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);
   });
 
+  // ───────── MAPAS DA MISSÃO ─────────
+  let mapas = [], mapasLib = false;
+  const mpFetch = (method, body) => fetch(API + '?lista=mapas', { method, headers: { Authorization: 'Bearer ' + (senha || ''), 'Content-Type': 'application/json' }, body: body ? JSON.stringify(body) : undefined })
+    .then(async r => { const d = await r.json().catch(() => ({})); if (!r.ok) { const e = new Error(d.error || r.status); e.status = r.status; e.data = d; throw e; } return d; });
+  async function loadMP() { const d = await mpFetch('GET'); mapas = d.lista || []; mapasLib = !!d.liberados; renderMP(); }
+  function renderMP() {
+    $('#mpcount').textContent = mapas.length; $('#mptotal').textContent = mapas.length;
+    $('#mpempty').hidden = mapas.length > 0;
+    const gate = $('#mpgate'), tg = $('#mptoggle');
+    gate.classList.toggle('on', mapasLib);
+    $('#mpstate').textContent = mapasLib ? 'MAPAS LIBERADOS · AS EMPRESAS JÁ PODEM ABRIR' : 'MAPAS TRAVADOS · SÓ VOCÊ VÊ (PRÉ-VISUALIZAÇÃO)';
+    $('#mphelp').textContent = mapasLib ? 'Qualquer pessoa com o link abre o mapa. Para travar de novo, use o botão.' : 'Quem abrir o link vê a contagem regressiva até o evento. Libere na hora da contagem, durante a noite.';
+    tg.disabled = false; tg.className = 'btn sm ' + (mapasLib ? 'btn-line' : 'btn-gold');
+    tg.textContent = mapasLib ? 'TRAVAR DE NOVO' : 'LIBERAR TODOS OS MAPAS'; tg.dataset.armed = '';
+    const ol = $('#mplist'); ol.innerHTML = '';
+    mapas.forEach(m => {
+      const url = location.origin + '/qdn/' + m.slug;
+      const li = document.createElement('li'); li.className = 'l10-card';
+      li.innerHTML = `<div class="l10-top"><span class="l10-num"></span><span class="l10-when"></span></div>
+        <p class="l10-name"></p><p class="l10-meta"></p><span class="mp-link"></span>
+        <div class="l10-actions"><a class="btn btn-gold sm open" target="_blank" rel="noopener">ABRIR</a><button type="button" class="btn btn-line sm copy">COPIAR LINK</button><a class="btn btn-line sm wa" target="_blank" rel="noopener">ENVIAR NO WHATSAPP</a><button type="button" class="btn btn-danger sm del">APAGAR</button></div>`;
+      li.querySelector('.l10-num').textContent = (m.tarefas || []).length + ' TAREFAS · ' + (m.red_flags || []).length + ' ALERTAS';
+      li.querySelector('.l10-when').textContent = m.atualizado_em ? ago(Date.parse(m.atualizado_em)) : '';
+      li.querySelector('.l10-name').textContent = m.empresa;
+      li.querySelector('.l10-meta').textContent = [m.contato_nome, m.ramo, m.cidade].filter(Boolean).join(' · ');
+      li.querySelector('.mp-link').textContent = url;
+      li.querySelector('.open').href = '/qdn/' + m.slug;
+      const insc = (typeof listaCR !== 'undefined' ? listaCR : []).find(w => (w.empresa || '').trim().toLowerCase() === (m.empresa || '').trim().toLowerCase());
+      const wa = li.querySelector('.wa');
+      const first = (m.contato_nome || '').split(' ')[0];
+      const texto = `Oi ${first}! Aqui é o Alexandre Nardi. O Mapa da Missão da ${m.empresa} está pronto: ${url}`;
+      wa.href = insc ? `https://wa.me/${insc.whatsapp}?text=${encodeURIComponent(texto)}` : `https://wa.me/?text=${encodeURIComponent(texto)}`;
+      const cp = li.querySelector('.copy');
+      cp.addEventListener('click', async () => { try { await navigator.clipboard.writeText(url); cp.textContent = 'COPIADO'; } catch (_) { cp.textContent = 'NÃO COPIOU'; } setTimeout(() => cp.textContent = 'COPIAR LINK', 1800); });
+      const del = li.querySelector('.del');
+      del.addEventListener('click', async () => {
+        if (del.dataset.armed !== '1') { del.dataset.armed = '1'; del.textContent = 'CONFIRMAR'; setTimeout(() => { del.dataset.armed = ''; del.textContent = 'APAGAR'; }, 4000); return; }
+        try { await mpFetch('DELETE', { slug: m.slug }); mapas = mapas.filter(x => x.slug !== m.slug); renderMP(); } catch (e) { handleErr(e); }
+      });
+      ol.append(li);
+    });
+  }
+  $('#mptoggle').addEventListener('click', async () => {
+    const tg = $('#mptoggle');
+    if (!mapasLib && tg.dataset.armed !== '1') { tg.dataset.armed = '1'; tg.textContent = 'CONFIRMAR: LIBERAR AGORA'; setTimeout(() => { if (tg.dataset.armed === '1') renderMP(); }, 5000); return; }
+    tg.disabled = true;
+    try { const d = await mpFetch('PATCH', { liberados: !mapasLib }); mapasLib = d.liberados; } catch (e) { handleErr(e); }
+    renderMP();
+  });
+  $('#mpimport').addEventListener('click', async () => {
+    const msg = $('#mpmsg'); msg.textContent = '';
+    let data; try { data = JSON.parse($('#mpjson').value); } catch (_) { msg.textContent = 'JSON INVÁLIDO. CONFIRA SE COLOU TUDO.'; return; }
+    try {
+      const d = await mpFetch('POST', Array.isArray(data) ? { mapas: data } : (data.mapas ? data : { mapas: [data] }));
+      msg.textContent = `${d.salvos.length} IMPORTADO(S)` + (d.erros.length ? ` · ${d.erros.length} COM ERRO: ` + d.erros.map(e => (e.empresa || '#' + (e.i + 1)) + ' (' + e.erro + ')').join(', ') : '');
+      if (d.salvos.length) $('#mpjson').value = '';
+      await loadMP();
+    } catch (e) { msg.textContent = 'NÃO FOI POSSÍVEL IMPORTAR (' + e.message + ')'; }
+  });
+
   function setMode(m) {
     mode = m;
     $$('.tab').forEach(t => t.classList.toggle('on', t.dataset.tab === m));
     $('#l10').hidden = m !== 'lista10';
     $('#cr').hidden = m !== 'contagem';
+    $('#mp').hidden = m !== 'mapas';
+    $('#app').classList.toggle('mode-mp', m === 'mapas');
     $('#app').classList.toggle('mode-l10', m === 'lista10');
     $('#app').classList.toggle('mode-cr', m === 'contagem');
+    if (!senha) return; // antes do login: carrega depois, junto com as missões
+    if (m === 'mapas') loadMP().catch(handleErr);
     if (m === 'lista10') loadL10().catch(handleErr);
     if (m === 'contagem') loadCR().catch(handleErr);
   }
@@ -346,9 +410,10 @@
   });
   // contador da aba já no login, e atualização junto com as missões
   const _load = load;
-  load = async function () { await _load(); loadL10().catch(() => {}); loadCR().catch(() => {}); };
+  load = async function () { await _load(); loadL10().catch(() => {}); loadCR().catch(() => {}); loadMP().catch(() => {}); };
   if (/[#&]lista10\b/.test(location.hash)) setTimeout(() => setMode('lista10'), 0);
   if (/[#&]contagem\b/.test(location.hash)) setTimeout(() => setMode('contagem'), 0);
+  if (/[#&]mapas\b/.test(location.hash)) setTimeout(() => setMode('mapas'), 0);
 
   boot();
 })();

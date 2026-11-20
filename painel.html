@@ -56,6 +56,7 @@
     <button type="button" class="tab on" data-tab="missoes">MISSÕES</button>
     <button type="button" class="tab" data-tab="lista10">LISTA DOS 10 <b id="l10count">0/10</b></button>
     <button type="button" class="tab" data-tab="contagem">CONTAGEM REGRESSIVA <b id="crcount">0</b></button>
+    <button type="button" class="tab" data-tab="mapas">MAPAS DA MISSÃO <b id="mpcount">0</b></button>
   </nav>
 
   <section class="l10" id="cr" hidden aria-label="Inscritos da Contagem Regressiva">
@@ -69,6 +70,31 @@
     <div class="cr-stats" id="crstats"></div>
     <ol class="l10-list" id="crlist"></ol>
     <p class="empty-l10" id="crempty" hidden>Ninguém se inscreveu ainda. As inscrições de /contagem aparecem aqui.</p>
+  </section>
+
+  <section class="l10" id="mp" hidden aria-label="Mapas da Missão">
+    <div class="l10-head">
+      <div>
+        <p class="mono gold">STUDIOOPENFRAME.COM/QDN/… · MAPAS DA MISSÃO</p>
+        <h2>Mapas da Missão · <span id="mptotal">0</span></h2>
+      </div>
+      <a class="btn btn-line sm" href="/qdn/exemplo" target="_blank" rel="noopener">VER O EXEMPLO</a>
+    </div>
+    <div class="mp-gate" id="mpgate">
+      <div>
+        <p class="mono" id="mpstate">CARREGANDO…</p>
+        <p class="mp-help" id="mphelp"></p>
+      </div>
+      <button class="btn sm" type="button" id="mptoggle" disabled>…</button>
+    </div>
+    <details class="mp-import">
+      <summary class="mono">IMPORTAR MAPAS (JSON)</summary>
+      <p class="mp-help">Cole aqui o JSON que a OpenFrame preparou (um mapa ou uma lista de mapas). Um mapa com o mesmo link substitui o anterior.</p>
+      <textarea id="mpjson" rows="8" spellcheck="false" placeholder='[{ "empresa": "…", "tarefas": [ … ] }]'></textarea>
+      <div class="l10-actions"><button class="btn btn-gold sm" type="button" id="mpimport">IMPORTAR</button><span class="mono dim" id="mpmsg" role="status"></span></div>
+    </details>
+    <ol class="l10-list" id="mplist"></ol>
+    <p class="empty-l10" id="mpempty" hidden>Nenhum mapa importado ainda.</p>
   </section>
 
   <section class="l10" id="l10" hidden aria-label="Lista dos 10 primeiros">

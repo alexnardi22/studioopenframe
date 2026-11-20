@@ -42,6 +42,43 @@ module.exports = async (req, res) => {
       await pipeline([['DEL', 'cr:' + w], ['ZREM', 'contagem_inscritos', w]]);
       return res.status(200).json({ ok: true });
     }
+    const listaMapas = (req.query && req.query.lista === 'mapas') || /[?&]lista=mapas\b/.test(req.url || '');
+    if (listaMapas) {
+      if (req.method === 'GET') {
+        const [lib, slugs] = await pipeline([['GET', 'mapas:liberados'], ['ZREVRANGE', 'mapas', 0, 999]]);
+        let lista = [];
+        if (slugs && slugs.length) {
+          const vals = (await pipeline([['MGET', ...slugs.map(s => 'mapa:' + s)]]))[0] || [];
+          lista = vals.map(v => { try { return JSON.parse(v); } catch (_) { return null; } }).filter(Boolean);
+        }
+        return res.status(200).json({ ok: true, liberados: lib === '1', lista });
+      }
+      const b = readBody(req);
+      if (req.method === 'PATCH') {
+        await pipeline([['SET', 'mapas:liberados', b.liberados ? '1' : '0']]);
+        return res.status(200).json({ ok: true, liberados: !!b.liberados });
+      }
+      if (req.method === 'DELETE') {
+        const s = String(b.slug || '').toLowerCase().replace(/[^a-z0-9-]/g, '').slice(0, 80);
+        if (!s) return res.status(400).json({ ok: false, error: 'slug' });
+        await pipeline([['DEL', 'mapa:' + s], ['ZREM', 'mapas', s]]);
+        return res.status(200).json({ ok: true });
+      }
+      if (req.method === 'POST') {
+        const arr = Array.isArray(b.mapas) ? b.mapas : (b.empresa ? [b] : []);
+        if (!arr.length || arr.length > 200) return res.status(400).json({ ok: false, error: 'vazio' });
+        const salvos = [], erros = [];
+        const cmds = [];
+        arr.forEach((m, i) => {
+          const r = limparMapa(m);
+          if (r.erro) { erros.push({ i, empresa: m && m.empresa, erro: r.erro }); return; }
+          cmds.push(['SET', 'mapa:' + r.mapa.slug, JSON.stringify(r.mapa)], ['ZADD', 'mapas', Date.now() + i, r.mapa.slug]);
+          salvos.push(r.mapa.slug);
+        });
+        if (cmds.length) await pipeline(cmds);
+        return res.status(200).json({ ok: true, salvos, erros });
+      }
+    }
     const lista10 = (req.query && req.query.lista === '10') || /[?&]lista=10\b/.test(req.url || '');
     if (lista10 && req.method === 'GET') {
       const nums = (await pipeline([['ZREVRANGE', 'waitlist_10primeiros', 0, 999]]))[0] || [];
@@ -96,3 +133,42 @@ module.exports = async (req, res) => {
     return res.status(500).json({ ok: false, error: 'storage' });
   }
 };
+
+// ───── Mapa da Missão: valida e limpa o JSON importado no Painel ─────
+const AUTON = ['sozinho', 'autoriza', 'voce'];
+const TIPOS_DIA = ['concluido', 'andamento', 'decisao', 'bloqueado', 'nao_verificado'];
+const txt = (v, n) => String(v == null ? '' : v).replace(/[\u0000-\u001f\u007f]/g, ' ').trim().slice(0, n);
+const slugify = s => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 48);
+function limparMapa(m) {
+  if (!m || typeof m !== 'object') return { erro: 'formato' };
+  const empresa = txt(m.empresa, 80);
+  if (empresa.length < 2) return { erro: 'empresa' };
+  let slug = String(m.slug || '').toLowerCase().replace(/[^a-z0-9-]/g, '').slice(0, 80);
+  // sufixo aleatório: o link não pode ser adivinhado só pelo nome da empresa
+  if (!slug) slug = (slugify(empresa) || 'empresa') + '-' + crypto.randomBytes(3).toString('hex');
+  if (slug === 'exemplo') return { erro: 'slug reservado' };
+  const lista = (a, n) => (Array.isArray(a) ? a : []).slice(0, n);
+  const tarefas = lista(m.tarefas, 8).map(t => ({
+    titulo: txt(t && t.titulo, 90), hoje: txt(t && t.hoje, 240), como: txt(t && t.como, 320),
+    autonomia: AUTON.includes(t && t.autonomia) ? t.autonomia : 'autoriza'
+  })).filter(t => t.titulo);
+  if (!tarefas.length) return { erro: 'tarefas' };
+  const n = v => { const x = Number(v); return isFinite(x) && x >= 0 && x < 1000 ? Math.round(x * 10) / 10 : null; };
+  const est = m.estimativa_horas || {};
+  return {
+    mapa: {
+      slug, empresa,
+      contato_nome: txt(m.contato_nome, 60), ramo: txt(m.ramo, 80), cidade: txt(m.cidade, 80),
+      resumo: txt(m.resumo, 700),
+      tarefas,
+      dia: lista(m.dia, 12).map(d => ({ hora: txt(d && d.hora, 8), texto: txt(d && d.texto, 160), tipo: TIPOS_DIA.includes(d && d.tipo) ? d.tipo : 'concluido' })).filter(d => d.texto),
+      red_flags: lista(m.red_flags, 6).map(r => ({ titulo: txt(r && r.titulo, 90), exemplo: txt(r && r.exemplo, 280), para: txt(r && r.para, 60) })).filter(r => r.titulo),
+      horas_semana_atual: txt(m.horas_semana_atual, 30),
+      estimativa_horas: { min: n(est.min), max: n(est.max) },
+      indicadores: lista(m.indicadores, 6).map(x => txt(x, 90)).filter(Boolean),
+      primeiro_passo: txt(m.primeiro_passo, 400),
+      ferramentas: txt(m.ferramentas, 200),
+      atualizado_em: new Date().toISOString()
+    }
+  };
+}

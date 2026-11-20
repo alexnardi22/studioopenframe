@@ -149,3 +149,13 @@ code{background:var(--panel2);padding:1px 6px;font-size:14px}
 .cr-a{margin:2px 0 0;font-size:15px;color:var(--ink2);white-space:pre-wrap}
 .cr-tags{display:flex;flex-wrap:wrap;gap:6px}
 .cr-tags span{font-size:11px;letter-spacing:.08em;border:1px solid rgba(227,177,113,.5);color:var(--gold);padding:3px 8px}
+
+.app.mode-mp .kpis,.app.mode-mp .toolbar,.app.mode-mp .split{display:none}
+.mp-gate{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:14px;border:1px solid var(--line2);background:var(--panel);padding:18px;margin-bottom:12px}
+.mp-gate.on{border-color:rgba(125,180,238,.6)}
+.mp-gate .mono{margin:0;color:var(--gold)}.mp-gate.on .mono{color:var(--blue)}
+.mp-help{margin:6px 0 0;color:var(--ink2);font-size:15px;max-width:620px}
+.mp-import{border:1px solid var(--line);padding:14px 18px;margin-bottom:16px}
+.mp-import summary{cursor:pointer;color:var(--ink2)}
+.mp-import textarea{width:100%;margin:10px 0;font:13px/1.45 ui-monospace,Menlo,monospace;background:#0B0D12;color:var(--ink);border:1px solid var(--line2);padding:12px;resize:vertical}
+.mp-link{font-size:14px;word-break:break-all;color:var(--ink2)}

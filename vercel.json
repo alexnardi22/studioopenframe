@@ -89,5 +89,10 @@
       "source": "/qdn/:slug",
       "destination": "/qdn/index.html"
     }
-  ]
+  ],
+  "functions": {
+    "api/painel.js": {
+      "maxDuration": 60
+    }
+  }
 }

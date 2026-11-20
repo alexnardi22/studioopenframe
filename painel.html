@@ -65,8 +65,15 @@
         <p class="mono gold">STUDIOOPENFRAME.COM/CONTAGEM · RAIO-X DA OPERAÇÃO</p>
         <h2>Contagem Regressiva · <span id="crtotal">0</span> inscritos</h2>
       </div>
-      <button class="btn btn-line sm" type="button" id="crcsv">EXPORTAR CSV</button>
+      <div class="l10-actions"><button class="btn btn-gold sm" type="button" id="crgen">GERAR MAPAS PENDENTES</button><button class="btn btn-line sm" type="button" id="crcsv">EXPORTAR CSV</button></div>
     </div>
+    <div class="mp-gate" id="crai" hidden>
+      <div>
+        <p class="mono">FALTA LIGAR A IA QUE ESCREVE OS MAPAS</p>
+        <p class="mp-help">Na Vercel: projeto studioopenframe → Settings → Environment Variables → adicione <code>ANTHROPIC_API_KEY</code> (ou <code>OPENAI_API_KEY</code>) com a sua chave. Depois: Deployments → ⋯ → Redeploy.</p>
+      </div>
+    </div>
+    <p class="mono dim cr-genmsg" id="crgenmsg" role="status"></p>
     <div class="cr-stats" id="crstats"></div>
     <ol class="l10-list" id="crlist"></ol>
     <p class="empty-l10" id="crempty" hidden>Ninguém se inscreveu ainda. As inscrições de /contagem aparecem aqui.</p>

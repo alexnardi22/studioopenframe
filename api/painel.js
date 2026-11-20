@@ -1,6 +1,7 @@
 // /api/painel — área privada: lista, atualiza e apaga missões. Protegida por PAINEL_SENHA.
 const crypto = require('crypto');
 const { configured, pipeline, readBody, clientIp } = require('./_redis');
+const { provedor, gerarMapa } = require('./_ia');
 
 const STATUSES = ['nova', 'analise', 'proposta', 'fechada', 'arquivada'];
 const sha = s => crypto.createHash('sha256').update(String(s)).digest();
@@ -34,13 +35,32 @@ module.exports = async (req, res) => {
       const nums = (await pipeline([['ZREVRANGE', 'contagem_inscritos', 0, 999]]))[0] || [];
       if (!nums.length) return res.status(200).json({ ok: true, lista: [] });
       const vals = (await pipeline([['MGET', ...nums.map(n => 'cr:' + n)]]))[0] || [];
-      return res.status(200).json({ ok: true, lista: vals.map(v => { try { return JSON.parse(v); } catch (_) { return null; } }).filter(Boolean) });
+      return res.status(200).json({ ok: true, ia: !!provedor(), lista: vals.map(v => { try { return JSON.parse(v); } catch (_) { return null; } }).filter(Boolean) });
     }
     if (listaCR && req.method === 'DELETE') {
       const w = String(readBody(req).whatsapp || '').replace(/\D/g, '').slice(0, 15);
       if (!w) return res.status(400).json({ ok: false, error: 'whatsapp' });
       await pipeline([['DEL', 'cr:' + w], ['ZREM', 'contagem_inscritos', w]]);
       return res.status(200).json({ ok: true });
+    }
+    const gerar = (req.query && req.query.lista === 'gerar') || /[?&]lista=gerar\b/.test(req.url || '');
+    if (gerar && req.method === 'POST') {
+      const b = readBody(req);
+      const w = String(b.whatsapp || '').replace(/\D/g, '').slice(0, 15);
+      const raw = w && (await pipeline([['GET', 'cr:' + w]]))[0];
+      if (!raw) return res.status(404).json({ ok: false, error: 'inscricao' });
+      const insc = JSON.parse(raw);
+      if (!provedor()) return res.status(503).json({ ok: false, error: 'ia_setup' });
+      let rascunho;
+      try { rascunho = await gerarMapa(insc, String(b.orientacao || '').slice(0, 600)); }
+      catch (e) { console.error('gerar', e); return res.status(502).json({ ok: false, error: 'ia', detail: String(e.message || e).slice(0, 200) }); }
+      rascunho.slug = insc.mapa_slug || '';
+      rascunho.whatsapp = w;
+      const r = limparMapa(rascunho);
+      if (r.erro) return res.status(502).json({ ok: false, error: 'ia', detail: 'mapa incompleto: ' + r.erro });
+      insc.mapa_slug = r.mapa.slug; insc.mapa_em = r.mapa.atualizado_em;
+      await pipeline([['SET', 'mapa:' + r.mapa.slug, JSON.stringify(r.mapa)], ['ZADD', 'mapas', Date.now(), r.mapa.slug], ['SET', 'cr:' + w, JSON.stringify(insc)]]);
+      return res.status(200).json({ ok: true, slug: r.mapa.slug, mapa: r.mapa });
     }
     const listaMapas = (req.query && req.query.lista === 'mapas') || /[?&]lista=mapas\b/.test(req.url || '');
     if (listaMapas) {
@@ -168,6 +188,7 @@ function limparMapa(m) {
       indicadores: lista(m.indicadores, 6).map(x => txt(x, 90)).filter(Boolean),
       primeiro_passo: txt(m.primeiro_passo, 400),
       ferramentas: txt(m.ferramentas, 200),
+      whatsapp: String(m.whatsapp || '').replace(/\D/g, '').slice(0, 15),
       atualizado_em: new Date().toISOString()
     }
   };

@@ -260,6 +260,19 @@
       li.querySelector('a').href = `https://wa.me/${w.whatsapp}?text=${encodeURIComponent(`Oi ${first}, aqui é o Alexandre Nardi. Vi que você entrou na lista dos 10 empresários fundadores. Podemos conversar?`)}`;
       const cp = li.querySelector('.cp');
       cp.addEventListener('click', async () => { try { await navigator.clipboard.writeText('+' + w.whatsapp); cp.textContent = 'COPIADO ✓'; } catch (_) { cp.textContent = 'SELECIONE E COPIE'; } setTimeout(() => cp.textContent = 'COPIAR', 1800); });
+      const stEl = li.querySelector('.st'), gen = li.querySelector('.gen'), ver = li.querySelector('.ver');
+      const pinta = () => {
+        const job = jobs[w.whatsapp];
+        if (job && job.estado === 'gerando') { stEl.className = 'st'; stEl.textContent = 'MAPA · A IA ESTÁ ESCREVENDO (ATÉ 1 MINUTO)…'; }
+        else if (job && job.estado === 'erro') { stEl.className = 'st err'; stEl.textContent = 'MAPA · ' + job.msg; }
+        else if (w.mapa_slug) { stEl.className = 'st ok'; stEl.textContent = 'MAPA PRONTO · TRAVADO ATÉ LIBERAR' + (w.mapa_em ? ' · ' + ago(Date.parse(w.mapa_em)).toUpperCase() : ''); }
+        else { stEl.className = 'st'; stEl.textContent = 'MAPA · AINDA NÃO GERADO'; }
+        gen.textContent = w.mapa_slug ? 'REFAZER MAPA' : 'GERAR MAPA';
+        gen.disabled = !iaOk || (job && job.estado === 'gerando');
+        ver.hidden = !w.mapa_slug; if (w.mapa_slug) ver.href = '/qdn/' + w.mapa_slug;
+      };
+      pinta();
+      gen.addEventListener('click', () => gerarMapa(w, li.querySelector('.ori').value));
       const del = li.querySelector('.del');
       del.addEventListener('click', async () => {
         if (del.dataset.armed !== '1') { del.dataset.armed = '1'; del.textContent = 'CONFIRMAR REMOÇÃO'; setTimeout(() => { del.dataset.armed = ''; del.textContent = 'REMOVER'; }, 4000); return; }
@@ -272,16 +285,19 @@
     });
   }
   // ───────── CONTAGEM REGRESSIVA ─────────
-  let listaCR = [];
+  let listaCR = [], iaOk = true;
   async function loadCR() {
     const r = await fetch(API + '?lista=cr', { headers: { Authorization: 'Bearer ' + (senha || '') } });
     const d = await r.json().catch(() => ({}));
     if (!r.ok) { const e = new Error(d.error || r.status); e.status = r.status; e.data = d; throw e; }
-    listaCR = d.lista || []; renderCR();
+    listaCR = d.lista || []; iaOk = !!d.ia; renderCR();
   }
   function renderCR() {
     $('#crcount').textContent = listaCR.length; $('#crtotal').textContent = listaCR.length;
     $('#crempty').hidden = listaCR.length > 0;
+    $('#crai').hidden = iaOk;
+    const pend = listaCR.filter(w => !w.mapa_slug).length;
+    $('#crgen').textContent = pend ? `GERAR MAPAS PENDENTES (${pend})` : 'TODOS OS MAPAS GERADOS'; $('#crgen').disabled = !pend || !iaOk || gerando;
     const cnt = {}; listaCR.forEach(w => (w.perdas || []).forEach(p => cnt[p] = (cnt[p] || 0) + 1));
     const st = $('#crstats'); st.innerHTML = '';
     Object.entries(cnt).sort((a, b) => b[1] - a[1]).forEach(([k, n]) => { const s = document.createElement('span'); s.textContent = k.toUpperCase(); const b = document.createElement('b'); b.textContent = n; s.append(b); st.append(s); });
@@ -294,7 +310,8 @@
         <div><p class="cr-q">3 tarefas que mais tomam tempo</p><p class="cr-a" data-k="tarefas"></p></div>
         <div><p class="cr-q">Horas por semana · Ferramentas</p><p class="cr-a" data-k="hf"></p></div>
         <div class="cr-tags"></div>
-        <div class="l10-actions"><a class="btn btn-gold sm wa" target="_blank" rel="noopener">WHATSAPP</a><a class="btn btn-line sm em">E-MAIL</a><button type="button" class="btn btn-danger sm del">REMOVER</button></div>`;
+        <div class="cr-map"><span class="st"></span><input type="text" class="ori" placeholder="Orientação para a IA (opcional). Ex.: foque no atendimento de orçamentos" maxlength="600"><button type="button" class="btn btn-gold sm gen">GERAR MAPA</button><a class="btn btn-line sm ver" target="_blank" rel="noopener" hidden>VER MAPA</a></div>
+        <div class="l10-actions"><a class="btn btn-line sm wa" target="_blank" rel="noopener">WHATSAPP</a><a class="btn btn-line sm em">E-MAIL</a><button type="button" class="btn btn-danger sm del">REMOVER</button></div>`;
       li.querySelector('.l10-when').textContent = ago(Date.parse(w.created_at));
       li.querySelector('.l10-name').textContent = `${w.empresa}`;
       const meta = li.querySelector('.l10-meta'); meta.textContent = `${w.nome} · ${w.ramo}${w.site ? ' · ' + w.site : ''} `;
@@ -305,8 +322,21 @@
       li.querySelector('[data-k=hf]').textContent = `${w.horas} h${w.ferramentas ? ' · ' + w.ferramentas : ''}`;
       const tags = li.querySelector('.cr-tags'); (w.perdas || []).forEach(p => { const t = document.createElement('span'); t.textContent = p; tags.append(t); });
       const first = (w.nome || '').split(' ')[0];
-      li.querySelector('.wa').href = `https://wa.me/${w.whatsapp}?text=${encodeURIComponent(`Oi ${first}, aqui é o Alexandre Nardi. Recebi sua inscrição na Contagem Regressiva e o Raio-X da ${w.empresa}. Já estou preparando o seu Mapa da Missão!`)}`;
+      li.querySelector('.wa').href = `https://wa.me/${w.whatsapp}?text=${encodeURIComponent(w.mapa_slug ? `Oi ${first}, aqui é o Alexandre Nardi. O Mapa da Missão da ${w.empresa} está pronto e decola na noite da Contagem Regressiva, dia 02/12. Guarde este link: ${location.origin}/qdn/${w.mapa_slug}` : `Oi ${first}, aqui é o Alexandre Nardi. Recebi sua inscrição na Contagem Regressiva e o Raio-X da ${w.empresa}. Já estou preparando o seu Mapa da Missão!`)}`;
       li.querySelector('.em').href = `mailto:${w.email}?subject=${encodeURIComponent('Contagem Regressiva · ' + w.empresa)}`;
+      const stEl = li.querySelector('.st'), gen = li.querySelector('.gen'), ver = li.querySelector('.ver');
+      const pinta = () => {
+        const job = jobs[w.whatsapp];
+        if (job && job.estado === 'gerando') { stEl.className = 'st'; stEl.textContent = 'MAPA · A IA ESTÁ ESCREVENDO (ATÉ 1 MINUTO)…'; }
+        else if (job && job.estado === 'erro') { stEl.className = 'st err'; stEl.textContent = 'MAPA · ' + job.msg; }
+        else if (w.mapa_slug) { stEl.className = 'st ok'; stEl.textContent = 'MAPA PRONTO · TRAVADO ATÉ LIBERAR' + (w.mapa_em ? ' · ' + ago(Date.parse(w.mapa_em)).toUpperCase() : ''); }
+        else { stEl.className = 'st'; stEl.textContent = 'MAPA · AINDA NÃO GERADO'; }
+        gen.textContent = w.mapa_slug ? 'REFAZER MAPA' : 'GERAR MAPA';
+        gen.disabled = !iaOk || (job && job.estado === 'gerando');
+        ver.hidden = !w.mapa_slug; if (w.mapa_slug) ver.href = '/qdn/' + w.mapa_slug;
+      };
+      pinta();
+      gen.addEventListener('click', () => gerarMapa(w, li.querySelector('.ori').value));
       const del = li.querySelector('.del');
       del.addEventListener('click', async () => {
         if (del.dataset.armed !== '1') { del.dataset.armed = '1'; del.textContent = 'CONFIRMAR REMOÇÃO'; setTimeout(() => { del.dataset.armed = ''; del.textContent = 'REMOVER'; }, 4000); return; }
@@ -316,6 +346,27 @@
       ol.append(li);
     });
   }
+  const jobs = {}; let gerando = false;
+  async function gerarMapa(w, orientacao) {
+    jobs[w.whatsapp] = { estado: 'gerando' }; renderCR();
+    try {
+      const r = await fetch(API + '?lista=gerar', { method: 'POST', headers: { Authorization: 'Bearer ' + senha, 'Content-Type': 'application/json' }, body: JSON.stringify({ whatsapp: w.whatsapp, orientacao }) });
+      const d = await r.json().catch(() => ({}));
+      if (!r.ok) throw new Error(d.error === 'ia_setup' ? 'FALTA CONFIGURAR A CHAVE DA IA NA VERCEL' : d.error === 'ia' ? 'A IA NÃO RESPONDEU DIREITO. TENTE DE NOVO. ' + (d.detail || '') : 'ERRO ' + (d.error || r.status));
+      w.mapa_slug = d.slug; w.mapa_em = d.mapa.atualizado_em; delete jobs[w.whatsapp];
+      loadMP().catch(() => {});
+    } catch (e) { jobs[w.whatsapp] = { estado: 'erro', msg: String(e.message || e).toUpperCase().slice(0, 160) }; }
+    renderCR();
+  }
+  $('#crgen').addEventListener('click', async () => {
+    if (gerando) return; gerando = true;
+    const fila = listaCR.filter(w => !w.mapa_slug); let ok = 0;
+    for (let i = 0; i < fila.length; i++) {
+      $('#crgenmsg').textContent = `GERANDO ${i + 1} DE ${fila.length}: ${fila[i].empresa.toUpperCase()}…`;
+      await gerarMapa(fila[i], ''); if (fila[i].mapa_slug) ok++;
+    }
+    gerando = false; $('#crgenmsg').textContent = `${ok} DE ${fila.length} MAPAS GERADOS. REVISE CADA UM EM "VER MAPA".`; renderCR();
+  });
   $('#crcsv').addEventListener('click', () => {
     const esc = v => `"${String(v == null ? '' : v).replace(/"/g, '""')}"`;
     const head = ['Inscrito em', 'Empresa', 'Nome', 'WhatsApp', 'E-mail', 'Ramo', 'Site/Instagram', 'O que faz', 'Tarefas', 'Horas/semana', 'Ferramentas', 'Onde perde', 'Origem'];
@@ -352,7 +403,7 @@
       li.querySelector('.l10-meta').textContent = [m.contato_nome, m.ramo, m.cidade].filter(Boolean).join(' · ');
       li.querySelector('.mp-link').textContent = url;
       li.querySelector('.open').href = '/qdn/' + m.slug;
-      const insc = (typeof listaCR !== 'undefined' ? listaCR : []).find(w => (w.empresa || '').trim().toLowerCase() === (m.empresa || '').trim().toLowerCase());
+      const insc = m.whatsapp ? { whatsapp: m.whatsapp } : (typeof listaCR !== 'undefined' ? listaCR : []).find(w => (w.empresa || '').trim().toLowerCase() === (m.empresa || '').trim().toLowerCase());
       const wa = li.querySelector('.wa');
       const first = (m.contato_nome || '').split(' ')[0];
       const texto = `Oi ${first}! Aqui é o Alexandre Nardi. O Mapa da Missão da ${m.empresa} está pronto: ${url}`;

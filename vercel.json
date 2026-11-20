@@ -86,7 +86,7 @@
       "destination": "/contagem/index.html"
     },
     {
-      "source": "/qdn/:slug([a-z0-9-]+)",
+      "source": "/qdn/:slug",
       "destination": "/qdn/index.html"
     }
   ]

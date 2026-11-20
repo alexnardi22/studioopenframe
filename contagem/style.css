@@ -33,7 +33,11 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f);font-si
 
 main{max-width:960px;margin:0 auto;padding:0 var(--pad)}
 .hero{min-height:calc(100svh - 74px);display:flex;flex-direction:column;justify-content:center;padding:56px 0 64px;text-align:center;align-items:center}
-.kicker{color:var(--ink3);margin:0 0 22px}
+.hero-logo{width:84px;height:auto;margin:0 0 26px;filter:drop-shadow(0 12px 40px rgba(60,120,220,.35))}
+.kicker{color:var(--ink3);margin:0 0 22px;max-width:560px}
+.goal{margin:34px 0 0;max-width:640px;border:1px solid rgba(227,177,113,.45);background:rgba(12,14,19,.9);padding:22px 22px 18px;display:flex;flex-direction:column;gap:10px;text-align:left}
+.goal p{margin:0}
+.goal p:nth-child(2){font-size:clamp(18px,2.2vw,21px);line-height:1.45;color:var(--ink)}
 h1{margin:0;font-weight:700;text-transform:uppercase;font-size:clamp(54px,13vw,148px);line-height:.9;letter-spacing:.01em}
 .slogan{margin:26px 0 0;font-size:clamp(20px,3vw,30px);line-height:1.3;max-width:640px;color:var(--ink2)}
 .clock{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line);margin:44px 0 0;width:min(560px,100%)}

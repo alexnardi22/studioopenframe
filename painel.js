@@ -310,7 +310,7 @@
         <div><p class="cr-q">3 tarefas que mais tomam tempo</p><p class="cr-a" data-k="tarefas"></p></div>
         <div><p class="cr-q">Horas por semana · Ferramentas</p><p class="cr-a" data-k="hf"></p></div>
         <div class="cr-tags"></div>
-        <div class="cr-map"><span class="st"></span><input type="text" class="ori" placeholder="Orientação para a IA (opcional). Ex.: foque no atendimento de orçamentos" maxlength="600"><button type="button" class="btn btn-gold sm gen">GERAR MAPA</button><a class="btn btn-line sm ver" target="_blank" rel="noopener" hidden>VER MAPA</a></div>
+        <div class="cr-map"><span class="st"></span><input type="text" class="ori" placeholder="Orientação para a IA (opcional). Ex.: foque no atendimento de orçamentos" maxlength="600"><button type="button" class="btn btn-gold sm gen">GERAR MAPA</button><a class="btn btn-line sm ver" target="_blank" rel="opener" hidden>VER MAPA</a></div>
         <div class="l10-actions"><a class="btn btn-line sm wa" target="_blank" rel="noopener">WHATSAPP</a><a class="btn btn-line sm em">E-MAIL</a><button type="button" class="btn btn-danger sm del">REMOVER</button></div>`;
       li.querySelector('.l10-when').textContent = ago(Date.parse(w.created_at));
       li.querySelector('.l10-name').textContent = `${w.empresa}`;
@@ -396,7 +396,7 @@
       const li = document.createElement('li'); li.className = 'l10-card';
       li.innerHTML = `<div class="l10-top"><span class="l10-num"></span><span class="l10-when"></span></div>
         <p class="l10-name"></p><p class="l10-meta"></p><span class="mp-link"></span>
-        <div class="l10-actions"><a class="btn btn-gold sm open" target="_blank" rel="noopener">ABRIR</a><button type="button" class="btn btn-line sm copy">COPIAR LINK</button><a class="btn btn-line sm wa" target="_blank" rel="noopener">ENVIAR NO WHATSAPP</a><button type="button" class="btn btn-danger sm del">APAGAR</button></div>`;
+        <div class="l10-actions"><a class="btn btn-gold sm open" target="_blank" rel="opener">ABRIR</a><button type="button" class="btn btn-line sm copy">COPIAR LINK</button><a class="btn btn-line sm wa" target="_blank" rel="noopener">ENVIAR NO WHATSAPP</a><button type="button" class="btn btn-danger sm del">APAGAR</button></div>`;
       li.querySelector('.l10-num').textContent = (m.tarefas || []).length + ' TAREFAS · ' + (m.red_flags || []).length + ' ALERTAS';
       li.querySelector('.l10-when').textContent = m.atualizado_em ? ago(Date.parse(m.atualizado_em)) : '';
       li.querySelector('.l10-name').textContent = m.empresa;

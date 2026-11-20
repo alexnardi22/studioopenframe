@@ -24,7 +24,12 @@
     const m = location.pathname.match(/\/qdn\/([a-z0-9-]+)/i);
     return m ? m[1].toLowerCase() : '';
   })();
-  const senha = (() => { try { return sessionStorage.getItem('of_painel') || localStorage.getItem('of_painel') || ''; } catch (_) { return ''; } })();
+  const senha = (() => {
+    try { const v = sessionStorage.getItem('of_painel') || localStorage.getItem('of_painel'); if (v) return v; } catch (_) {}
+    // aberto pelo Painel em outra aba: lê a sessão da aba do Painel
+    try { if (window.opener && window.opener.location.origin === location.origin) return window.opener.sessionStorage.getItem('of_painel') || ''; } catch (_) {}
+    return '';
+  })();
 
   async function carregar() {
     if (!slug) return show('sMissing');

@@ -69,3 +69,4 @@
 @media (max-width:760px){.emb-block{grid-template-columns:1fr}#emb{max-width:360px}}
 .cta-block .left{align-items:flex-start}
 @media print{#stars,.top,.flag,.emb-actions,.cta-block{display:none!important}body{background:#fff;color:#000}}
+.staff{margin:40px 0 0;font-size:10px;opacity:.6}.staff a{color:inherit}

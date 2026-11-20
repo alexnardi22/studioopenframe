@@ -87,7 +87,7 @@
     },
     {
       "source": "/qdn/:slug",
-      "destination": "/qdn/index.html"
+      "destination": "/qdn"
     }
   ],
   "functions": {

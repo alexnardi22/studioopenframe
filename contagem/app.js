@@ -1,8 +1,8 @@
 (() => {
   'use strict';
   // ───── CONFIG: data e hora do evento (horário de Orlando). Deixe vazio enquanto não houver data.
-  const EVENTO = '';            // ex.: '2026-12-10T19:30:00-05:00'
-  const EVENTO_TEXTO = '';      // ex.: '10 DE DEZEMBRO · 19H30 (ORLANDO) · ONLINE · 2 HORAS'
+  const EVENTO = '2026-12-02T19:00:00-05:00';            // ex.: '2026-12-10T19:30:00-05:00'
+  const EVENTO_TEXTO = '02 DE DEZEMBRO · QUARTA-FEIRA · 7PM ÀS 9PM (ORLANDO) · ONLINE';      // ex.: '10 DE DEZEMBRO · 19H30 (ORLANDO) · ONLINE · 2 HORAS'
 
   const $ = id => document.getElementById(id);
   const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;

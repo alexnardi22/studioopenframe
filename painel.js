@@ -271,12 +271,69 @@
       ol.append(li);
     });
   }
+  // ───────── CONTAGEM REGRESSIVA ─────────
+  let listaCR = [];
+  async function loadCR() {
+    const r = await fetch(API + '?lista=cr', { headers: { Authorization: 'Bearer ' + (senha || '') } });
+    const d = await r.json().catch(() => ({}));
+    if (!r.ok) { const e = new Error(d.error || r.status); e.status = r.status; e.data = d; throw e; }
+    listaCR = d.lista || []; renderCR();
+  }
+  function renderCR() {
+    $('#crcount').textContent = listaCR.length; $('#crtotal').textContent = listaCR.length;
+    $('#crempty').hidden = listaCR.length > 0;
+    const cnt = {}; listaCR.forEach(w => (w.perdas || []).forEach(p => cnt[p] = (cnt[p] || 0) + 1));
+    const st = $('#crstats'); st.innerHTML = '';
+    Object.entries(cnt).sort((a, b) => b[1] - a[1]).forEach(([k, n]) => { const s = document.createElement('span'); s.textContent = k.toUpperCase(); const b = document.createElement('b'); b.textContent = n; s.append(b); st.append(s); });
+    const ol = $('#crlist'); ol.innerHTML = '';
+    listaCR.slice().sort((a, b) => a.created_at < b.created_at ? -1 : 1).forEach((w, i) => {
+      const li = document.createElement('li'); li.className = 'l10-card';
+      li.innerHTML = `<div class="l10-top"><span class="l10-num">Nº ${String(i + 1).padStart(2, '0')}</span><span class="l10-when"></span></div>
+        <p class="l10-name"></p><p class="l10-meta"></p><span class="l10-wa"></span>
+        <div><p class="cr-q">O que faz</p><p class="cr-a" data-k="faz"></p></div>
+        <div><p class="cr-q">3 tarefas que mais tomam tempo</p><p class="cr-a" data-k="tarefas"></p></div>
+        <div><p class="cr-q">Horas por semana · Ferramentas</p><p class="cr-a" data-k="hf"></p></div>
+        <div class="cr-tags"></div>
+        <div class="l10-actions"><a class="btn btn-gold sm wa" target="_blank" rel="noopener">WHATSAPP</a><a class="btn btn-line sm em">E-MAIL</a><button type="button" class="btn btn-danger sm del">REMOVER</button></div>`;
+      li.querySelector('.l10-when').textContent = ago(Date.parse(w.created_at));
+      li.querySelector('.l10-name').textContent = `${w.empresa}`;
+      const meta = li.querySelector('.l10-meta'); meta.textContent = `${w.nome} · ${w.ramo}${w.site ? ' · ' + w.site : ''} `;
+      if (w.origem) { const s2 = document.createElement('span'); s2.className = 'l10-src'; s2.textContent = w.origem; meta.append(s2); }
+      li.querySelector('.l10-wa').textContent = fmtWa(w.whatsapp) + ' · ' + w.email;
+      li.querySelector('[data-k=faz]').textContent = w.faz;
+      li.querySelector('[data-k=tarefas]').textContent = w.tarefas;
+      li.querySelector('[data-k=hf]').textContent = `${w.horas} h${w.ferramentas ? ' · ' + w.ferramentas : ''}`;
+      const tags = li.querySelector('.cr-tags'); (w.perdas || []).forEach(p => { const t = document.createElement('span'); t.textContent = p; tags.append(t); });
+      const first = (w.nome || '').split(' ')[0];
+      li.querySelector('.wa').href = `https://wa.me/${w.whatsapp}?text=${encodeURIComponent(`Oi ${first}, aqui é o Alexandre Nardi. Recebi sua inscrição na Contagem Regressiva e o Raio-X da ${w.empresa}. Já estou preparando o seu Mapa da Missão!`)}`;
+      li.querySelector('.em').href = `mailto:${w.email}?subject=${encodeURIComponent('Contagem Regressiva · ' + w.empresa)}`;
+      const del = li.querySelector('.del');
+      del.addEventListener('click', async () => {
+        if (del.dataset.armed !== '1') { del.dataset.armed = '1'; del.textContent = 'CONFIRMAR REMOÇÃO'; setTimeout(() => { del.dataset.armed = ''; del.textContent = 'REMOVER'; }, 4000); return; }
+        const r = await fetch(API + '?lista=cr', { method: 'DELETE', headers: { Authorization: 'Bearer ' + senha, 'Content-Type': 'application/json' }, body: JSON.stringify({ whatsapp: w.whatsapp }) }).catch(() => null);
+        if (r && r.ok) { listaCR = listaCR.filter(x => x.whatsapp !== w.whatsapp); renderCR(); }
+      });
+      ol.append(li);
+    });
+  }
+  $('#crcsv').addEventListener('click', () => {
+    const esc = v => `"${String(v == null ? '' : v).replace(/"/g, '""')}"`;
+    const head = ['Inscrito em', 'Empresa', 'Nome', 'WhatsApp', 'E-mail', 'Ramo', 'Site/Instagram', 'O que faz', 'Tarefas', 'Horas/semana', 'Ferramentas', 'Onde perde', 'Origem'];
+    const rows = listaCR.map(w => [new Date(w.created_at).toLocaleString('pt-BR'), w.empresa, w.nome, '+' + w.whatsapp, w.email, w.ramo, w.site, w.faz, w.tarefas, w.horas, w.ferramentas, (w.perdas || []).join('; '), w.origem].map(esc).join(','));
+    const blob = new Blob(['\ufeff' + [head.map(esc).join(',')].concat(rows).join('\n')], { type: 'text/csv;charset=utf-8' });
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `contagem-regressiva-${new Date().toISOString().slice(0, 10)}.csv`;
+    document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+  });
+
   function setMode(m) {
     mode = m;
     $$('.tab').forEach(t => t.classList.toggle('on', t.dataset.tab === m));
     $('#l10').hidden = m !== 'lista10';
+    $('#cr').hidden = m !== 'contagem';
     $('#app').classList.toggle('mode-l10', m === 'lista10');
+    $('#app').classList.toggle('mode-cr', m === 'contagem');
     if (m === 'lista10') loadL10().catch(handleErr);
+    if (m === 'contagem') loadCR().catch(handleErr);
   }
   $$('.tab').forEach(t => t.addEventListener('click', () => setMode(t.dataset.tab)));
   $('#l10csv').addEventListener('click', () => {
@@ -289,8 +346,9 @@
   });
   // contador da aba já no login, e atualização junto com as missões
   const _load = load;
-  load = async function () { await _load(); loadL10().catch(() => {}); };
+  load = async function () { await _load(); loadL10().catch(() => {}); loadCR().catch(() => {}); };
   if (/[#&]lista10\b/.test(location.hash)) setTimeout(() => setMode('lista10'), 0);
+  if (/[#&]contagem\b/.test(location.hash)) setTimeout(() => setMode('contagem'), 0);
 
   boot();
 })();

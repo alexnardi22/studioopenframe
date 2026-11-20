@@ -140,3 +140,12 @@ code{background:var(--panel2);padding:1px 6px;font-size:14px}
 .l10-actions .del{margin-left:auto}
 .l10-src{display:inline-block;font-size:10px;letter-spacing:.14em;border:1px solid var(--line2);padding:2px 6px;color:var(--ink3)}
 .empty-l10{color:var(--ink2);max-width:460px}
+
+.app.mode-cr .kpis,.app.mode-cr .toolbar,.app.mode-cr .split{display:none}
+.cr-stats{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.cr-stats span{border:1px solid var(--line);padding:8px 12px;font-size:12px;letter-spacing:.1em;color:var(--ink2)}
+.cr-stats b{color:var(--gold);font-weight:500;margin-left:6px}
+.cr-q{margin:0;font-size:12px;letter-spacing:.12em;color:var(--ink3);text-transform:uppercase}
+.cr-a{margin:2px 0 0;font-size:15px;color:var(--ink2);white-space:pre-wrap}
+.cr-tags{display:flex;flex-wrap:wrap;gap:6px}
+.cr-tags span{font-size:11px;letter-spacing:.08em;border:1px solid rgba(227,177,113,.5);color:var(--gold);padding:3px 8px}

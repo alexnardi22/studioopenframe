@@ -48,6 +48,15 @@
           "value": "noindex, nofollow"
         }
       ]
+    },
+    {
+      "source": "/contagem(.*)",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
+      ]
     }
   ],
   "rewrites": [
@@ -58,6 +67,14 @@
     {
       "source": "/10primeiros/",
       "destination": "/10primeiros/index.html"
+    },
+    {
+      "source": "/contagem",
+      "destination": "/contagem/index.html"
+    },
+    {
+      "source": "/contagem/",
+      "destination": "/contagem/index.html"
     }
   ]
 }

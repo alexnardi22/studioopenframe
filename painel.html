@@ -55,7 +55,21 @@
   <nav class="tabs" aria-label="Seções do painel">
     <button type="button" class="tab on" data-tab="missoes">MISSÕES</button>
     <button type="button" class="tab" data-tab="lista10">LISTA DOS 10 <b id="l10count">0/10</b></button>
+    <button type="button" class="tab" data-tab="contagem">CONTAGEM REGRESSIVA <b id="crcount">0</b></button>
   </nav>
+
+  <section class="l10" id="cr" hidden aria-label="Inscritos da Contagem Regressiva">
+    <div class="l10-head">
+      <div>
+        <p class="mono gold">STUDIOOPENFRAME.COM/CONTAGEM · RAIO-X DA OPERAÇÃO</p>
+        <h2>Contagem Regressiva · <span id="crtotal">0</span> inscritos</h2>
+      </div>
+      <button class="btn btn-line sm" type="button" id="crcsv">EXPORTAR CSV</button>
+    </div>
+    <div class="cr-stats" id="crstats"></div>
+    <ol class="l10-list" id="crlist"></ol>
+    <p class="empty-l10" id="crempty" hidden>Ninguém se inscreveu ainda. As inscrições de /contagem aparecem aqui.</p>
+  </section>
 
   <section class="l10" id="l10" hidden aria-label="Lista dos 10 primeiros">
     <div class="l10-head">

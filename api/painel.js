@@ -29,6 +29,19 @@ module.exports = async (req, res) => {
       return res.status(fails > 15 ? 429 : 401).json({ ok: false, error: fails > 15 ? 'locked' : 'auth' });
     }
 
+    const listaCR = (req.query && req.query.lista === 'cr') || /[?&]lista=cr\b/.test(req.url || '');
+    if (listaCR && req.method === 'GET') {
+      const nums = (await pipeline([['ZREVRANGE', 'contagem_inscritos', 0, 999]]))[0] || [];
+      if (!nums.length) return res.status(200).json({ ok: true, lista: [] });
+      const vals = (await pipeline([['MGET', ...nums.map(n => 'cr:' + n)]]))[0] || [];
+      return res.status(200).json({ ok: true, lista: vals.map(v => { try { return JSON.parse(v); } catch (_) { return null; } }).filter(Boolean) });
+    }
+    if (listaCR && req.method === 'DELETE') {
+      const w = String(readBody(req).whatsapp || '').replace(/\D/g, '').slice(0, 15);
+      if (!w) return res.status(400).json({ ok: false, error: 'whatsapp' });
+      await pipeline([['DEL', 'cr:' + w], ['ZREM', 'contagem_inscritos', w]]);
+      return res.status(200).json({ ok: true });
+    }
     const lista10 = (req.query && req.query.lista === '10') || /[?&]lista=10\b/.test(req.url || '');
     if (lista10 && req.method === 'GET') {
       const nums = (await pipeline([['ZREVRANGE', 'waitlist_10primeiros', 0, 999]]))[0] || [];

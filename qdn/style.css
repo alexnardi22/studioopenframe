@@ -70,3 +70,8 @@
 .cta-block .left{align-items:flex-start}
 @media print{#stars,.top,.flag,.emb-actions,.cta-block{display:none!important}body{background:#fff;color:#000}}
 .staff{margin:40px 0 0;font-size:10px;opacity:.6}.staff a{color:inherit}
+.m-brand{display:flex;align-items:center;gap:18px}
+.m-brand p{margin:0}
+.m-logo{width:84px;height:84px;flex:none;border-radius:50%;background:#fff;display:grid;place-items:center;overflow:hidden;box-shadow:0 0 0 2px rgba(227,177,113,.7),0 12px 40px rgba(60,120,220,.3)}
+.m-logo img{width:100%;height:100%;object-fit:contain}
+@media (max-width:520px){.m-logo{width:64px;height:64px}}

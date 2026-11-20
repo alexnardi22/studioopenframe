@@ -69,6 +69,7 @@
     if (m.exemplo) flag('EXEMPLO ILUSTRATIVO · EMPRESA FICTÍCIA · CADA EMPRESÁRIO INSCRITO RECEBE O MAPA DA PRÓPRIA EMPRESA');
     document.title = `Mapa da Missão · ${m.empresa} | OpenFrame`;
     $('mEmpresa').textContent = m.empresa;
+    if (m.logo && /^data:image\//.test(m.logo)) { $('mLogo').src = m.logo; $('mLogo').alt = 'Logo ' + m.empresa; $('mLogoBox').hidden = false; }
     $('mMeta').textContent = [m.contato_nome && 'PREPARADO PARA ' + m.contato_nome, m.ramo, m.cidade].filter(Boolean).join(' · ').toUpperCase();
     $('mResumo').textContent = m.resumo || '';
     $('mResumo').hidden = !m.resumo;
@@ -126,7 +127,7 @@
     $('bPasso').hidden = !m.primeiro_passo;
 
     show('sMap');
-    emblema(m.empresa).catch(() => {});
+    emblema(m.empresa, m.logo).catch(() => {});
   }
 
   // ───── emblema Missão 001 ─────
@@ -150,7 +151,9 @@
     return s;
   }
 
-  async function emblema(nome) {
+  const carregaImg = src => new Promise(r => { if (!src || !/^data:image\//.test(src)) return r(null); const i = new Image(); i.onload = () => r(i); i.onerror = () => r(null); i.src = src; });
+  async function emblema(nome, logoEmpresa) {
+    const marca = await carregaImg(logoEmpresa);
     try { await Promise.all([document.fonts.load('700 60px D-DIN'), document.fonts.load('500 40px D-DIN')]); } catch (_) {}
     await logoPronto;
     const cv = $('emb'), g = cv.getContext('2d'); const S = 1080, C = S / 2;
@@ -173,8 +176,16 @@
     g.lineWidth = 2.5; g.strokeStyle = 'rgba(125,180,238,.7)'; g.beginPath(); g.ellipse(0, 0, 300, 96, 0, 0, 7); g.stroke();
     g.fillStyle = '#E3B171'; g.shadowColor = '#E3B171'; g.shadowBlur = 24; g.beginPath(); g.arc(300 * Math.cos(-.5), 96 * Math.sin(-.5), 11, 0, 7); g.fill();
     g.restore(); g.shadowBlur = 0;
-    // logo
-    if (logo.naturalWidth) { const lw = 250, lh = lw * logo.naturalHeight / logo.naturalWidth; g.shadowColor = 'rgba(60,120,220,.55)'; g.shadowBlur = 50; g.drawImage(logo, C - lw / 2, C - lh / 2 - 34, lw, lh); g.shadowBlur = 0; }
+    // logo: o da empresa no centro (com o da OpenFrame acima), ou só o da OpenFrame
+    if (marca) {
+      const r = 128, cy = C - 30;
+      g.save(); g.shadowColor = 'rgba(60,120,220,.55)'; g.shadowBlur = 50; g.fillStyle = '#fff'; g.beginPath(); g.arc(C, cy, r, 0, 7); g.fill(); g.restore();
+      g.save(); g.beginPath(); g.arc(C, cy, r - 6, 0, 7); g.clip();
+      const k = Math.min((r - 6) * 2 / marca.naturalWidth, (r - 6) * 2 / marca.naturalHeight) * 0.98;
+      const iw = marca.naturalWidth * k, ih = marca.naturalHeight * k; g.drawImage(marca, C - iw / 2, cy - ih / 2, iw, ih); g.restore();
+      g.lineWidth = 6; g.strokeStyle = '#E3B171'; g.beginPath(); g.arc(C, cy, r, 0, 7); g.stroke();
+      if (logo.naturalWidth) { const lw = 70, lh = lw * logo.naturalHeight / logo.naturalWidth; g.drawImage(logo, C - lw / 2, cy - r - 30 - lh, lw, lh); }
+    } else if (logo.naturalWidth) { const lw = 250, lh = lw * logo.naturalHeight / logo.naturalWidth; g.shadowColor = 'rgba(60,120,220,.55)'; g.shadowBlur = 50; g.drawImage(logo, C - lw / 2, C - lh / 2 - 34, lw, lh); g.shadowBlur = 0; }
     // textos centrais
     g.fillStyle = '#F2F2F0'; g.font = '700 64px D-DIN'; g.fillText('MISSÃO 001', C, C + 175);
     g.fillStyle = '#E3B171'; g.font = '500 26px D-DIN';

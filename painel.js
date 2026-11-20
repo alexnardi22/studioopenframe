@@ -272,6 +272,29 @@
         ver.hidden = !w.mapa_slug; if (w.mapa_slug) ver.href = '/qdn/' + w.mapa_slug;
       };
       pinta();
+      const lbox = li.querySelector('.cr-logo'), lst = li.querySelector('.lst');
+      lbox.hidden = !w.mapa_slug;
+      const lmsg = { auto: 'LOGO · ENCONTRADO NO SITE/INSTAGRAM', manual: 'LOGO · ENVIADO POR VOCÊ' };
+      lst.textContent = (logoJobs[w.whatsapp]) || lmsg[w.logo] || 'LOGO · SEM LOGO (O MAPA MOSTRA SÓ O NOME)';
+      lst.className = 'st lst' + (w.logo && !logoJobs[w.whatsapp] ? ' ok' : '');
+      li.querySelector('.lrem').hidden = !w.logo;
+      const logoAcao = async (body, aguarde) => {
+        logoJobs[w.whatsapp] = aguarde; renderCR();
+        try {
+          const r = await fetch(API + '?lista=logo', { method: 'POST', headers: { Authorization: 'Bearer ' + senha, 'Content-Type': 'application/json' }, body: JSON.stringify(Object.assign({ whatsapp: w.whatsapp }, body)) });
+          const d = await r.json().catch(() => ({}));
+          if (r.ok) { w.logo = d.logo; delete logoJobs[w.whatsapp]; }
+          else logoJobs[w.whatsapp] = d.error === 'logo_nao_encontrado' ? 'LOGO · NÃO ENCONTREI. ENVIE O ARQUIVO DO LOGO.' : 'LOGO · ERRO (' + (d.error || r.status) + ')';
+        } catch (_) { logoJobs[w.whatsapp] = 'LOGO · SEM CONEXÃO'; }
+        renderCR();
+      };
+      li.querySelector('.lbusca').addEventListener('click', () => logoAcao({}, 'LOGO · PROCURANDO…'));
+      li.querySelector('.lrem').addEventListener('click', () => logoAcao({ remover: true }, 'LOGO · TIRANDO…'));
+      li.querySelector('.lfile').addEventListener('change', async e => {
+        const f = e.target.files && e.target.files[0]; if (!f) return;
+        try { logoAcao({ dataUrl: await reduzirImagem(f) }, 'LOGO · ENVIANDO…'); }
+        catch (_) { logoJobs[w.whatsapp] = 'LOGO · NÃO CONSEGUI LER ESSA IMAGEM'; renderCR(); }
+      });
       gen.addEventListener('click', () => gerarMapa(w, li.querySelector('.ori').value));
       const del = li.querySelector('.del');
       del.addEventListener('click', async () => {
@@ -311,6 +334,7 @@
         <div><p class="cr-q">Horas por semana · Ferramentas</p><p class="cr-a" data-k="hf"></p></div>
         <div class="cr-tags"></div>
         <div class="cr-map"><span class="st"></span><input type="text" class="ori" placeholder="Orientação para a IA (opcional). Ex.: foque no atendimento de orçamentos" maxlength="600"><button type="button" class="btn btn-gold sm gen">GERAR MAPA</button><a class="btn btn-line sm ver" target="_blank" rel="opener" hidden>VER MAPA</a></div>
+        <div class="cr-map cr-logo" hidden><span class="st lst"></span><label class="btn btn-line sm">ENVIAR LOGO<input type="file" accept="image/png,image/jpeg,image/webp" class="sr lfile"></label><button type="button" class="btn btn-line sm lbusca">BUSCAR NO SITE/INSTAGRAM</button><button type="button" class="btn btn-line sm lrem" hidden>TIRAR LOGO</button></div>
         <div class="l10-actions"><a class="btn btn-line sm wa" target="_blank" rel="noopener">WHATSAPP</a><a class="btn btn-line sm em">E-MAIL</a><button type="button" class="btn btn-danger sm del">REMOVER</button></div>`;
       li.querySelector('.l10-when').textContent = ago(Date.parse(w.created_at));
       li.querySelector('.l10-name').textContent = `${w.empresa}`;
@@ -336,6 +360,29 @@
         ver.hidden = !w.mapa_slug; if (w.mapa_slug) ver.href = '/qdn/' + w.mapa_slug;
       };
       pinta();
+      const lbox = li.querySelector('.cr-logo'), lst = li.querySelector('.lst');
+      lbox.hidden = !w.mapa_slug;
+      const lmsg = { auto: 'LOGO · ENCONTRADO NO SITE/INSTAGRAM', manual: 'LOGO · ENVIADO POR VOCÊ' };
+      lst.textContent = (logoJobs[w.whatsapp]) || lmsg[w.logo] || 'LOGO · SEM LOGO (O MAPA MOSTRA SÓ O NOME)';
+      lst.className = 'st lst' + (w.logo && !logoJobs[w.whatsapp] ? ' ok' : '');
+      li.querySelector('.lrem').hidden = !w.logo;
+      const logoAcao = async (body, aguarde) => {
+        logoJobs[w.whatsapp] = aguarde; renderCR();
+        try {
+          const r = await fetch(API + '?lista=logo', { method: 'POST', headers: { Authorization: 'Bearer ' + senha, 'Content-Type': 'application/json' }, body: JSON.stringify(Object.assign({ whatsapp: w.whatsapp }, body)) });
+          const d = await r.json().catch(() => ({}));
+          if (r.ok) { w.logo = d.logo; delete logoJobs[w.whatsapp]; }
+          else logoJobs[w.whatsapp] = d.error === 'logo_nao_encontrado' ? 'LOGO · NÃO ENCONTREI. ENVIE O ARQUIVO DO LOGO.' : 'LOGO · ERRO (' + (d.error || r.status) + ')';
+        } catch (_) { logoJobs[w.whatsapp] = 'LOGO · SEM CONEXÃO'; }
+        renderCR();
+      };
+      li.querySelector('.lbusca').addEventListener('click', () => logoAcao({}, 'LOGO · PROCURANDO…'));
+      li.querySelector('.lrem').addEventListener('click', () => logoAcao({ remover: true }, 'LOGO · TIRANDO…'));
+      li.querySelector('.lfile').addEventListener('change', async e => {
+        const f = e.target.files && e.target.files[0]; if (!f) return;
+        try { logoAcao({ dataUrl: await reduzirImagem(f) }, 'LOGO · ENVIANDO…'); }
+        catch (_) { logoJobs[w.whatsapp] = 'LOGO · NÃO CONSEGUI LER ESSA IMAGEM'; renderCR(); }
+      });
       gen.addEventListener('click', () => gerarMapa(w, li.querySelector('.ori').value));
       const del = li.querySelector('.del');
       del.addEventListener('click', async () => {
@@ -346,14 +393,27 @@
       ol.append(li);
     });
   }
-  const jobs = {}; let gerando = false;
+  const jobs = {}, logoJobs = {}; let gerando = false;
+  function reduzirImagem(file) {
+    return new Promise((ok, fail) => {
+      const img = new Image(), url = URL.createObjectURL(file);
+      img.onload = () => {
+        const k = Math.min(1, 400 / Math.max(img.width, img.height));
+        const cv = document.createElement('canvas'); cv.width = Math.round(img.width * k); cv.height = Math.round(img.height * k);
+        cv.getContext('2d').drawImage(img, 0, 0, cv.width, cv.height); URL.revokeObjectURL(url);
+        ok(cv.toDataURL('image/png'));
+      };
+      img.onerror = () => { URL.revokeObjectURL(url); fail(); };
+      img.src = url;
+    });
+  }
   async function gerarMapa(w, orientacao) {
     jobs[w.whatsapp] = { estado: 'gerando' }; renderCR();
     try {
       const r = await fetch(API + '?lista=gerar', { method: 'POST', headers: { Authorization: 'Bearer ' + senha, 'Content-Type': 'application/json' }, body: JSON.stringify({ whatsapp: w.whatsapp, orientacao }) });
       const d = await r.json().catch(() => ({}));
       if (!r.ok) throw new Error(d.error === 'ia_setup' ? 'FALTA CONFIGURAR A CHAVE DA IA NA VERCEL' : d.error === 'ia' ? 'A IA NÃO RESPONDEU DIREITO. TENTE DE NOVO. ' + (d.detail || '') : 'ERRO ' + (d.error || r.status));
-      w.mapa_slug = d.slug; w.mapa_em = d.mapa.atualizado_em; delete jobs[w.whatsapp];
+      w.mapa_slug = d.slug; w.mapa_em = d.mapa.atualizado_em; if (d.logo) w.logo = d.logo; delete jobs[w.whatsapp];
       loadMP().catch(() => {});
     } catch (e) { jobs[w.whatsapp] = { estado: 'erro', msg: String(e.message || e).toUpperCase().slice(0, 160) }; }
     renderCR();

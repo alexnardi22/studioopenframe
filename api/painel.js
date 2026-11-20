@@ -2,6 +2,7 @@
 const crypto = require('crypto');
 const { configured, pipeline, readBody, clientIp } = require('./_redis');
 const { provedor, gerarMapa } = require('./_ia');
+const { buscarLogo, dataUrlValida } = require('./_logo');
 
 const STATUSES = ['nova', 'analise', 'proposta', 'fechada', 'arquivada'];
 const sha = s => crypto.createHash('sha256').update(String(s)).digest();
@@ -59,8 +60,35 @@ module.exports = async (req, res) => {
       const r = limparMapa(rascunho);
       if (r.erro) return res.status(502).json({ ok: false, error: 'ia', detail: 'mapa incompleto: ' + r.erro });
       insc.mapa_slug = r.mapa.slug; insc.mapa_em = r.mapa.atualizado_em;
+      // logo: tenta buscar no site/Instagram só se ainda não houver um
+      const [temLogo] = await pipeline([['EXISTS', 'mapalogo:' + r.mapa.slug]]);
+      if (!temLogo && insc.site) {
+        const d = await buscarLogo(insc.site).catch(() => '');
+        if (d) { await pipeline([['SET', 'mapalogo:' + r.mapa.slug, d]]); insc.logo = 'auto'; }
+      }
       await pipeline([['SET', 'mapa:' + r.mapa.slug, JSON.stringify(r.mapa)], ['ZADD', 'mapas', Date.now(), r.mapa.slug], ['SET', 'cr:' + w, JSON.stringify(insc)]]);
-      return res.status(200).json({ ok: true, slug: r.mapa.slug, mapa: r.mapa });
+      return res.status(200).json({ ok: true, slug: r.mapa.slug, mapa: r.mapa, logo: insc.logo || '' });
+    }
+    const logoReq = (req.query && req.query.lista === 'logo') || /[?&]lista=logo\b/.test(req.url || '');
+    if (logoReq && req.method === 'POST') {
+      const b = readBody(req);
+      const w = String(b.whatsapp || '').replace(/\D/g, '').slice(0, 15);
+      const raw = w && (await pipeline([['GET', 'cr:' + w]]))[0];
+      if (!raw) return res.status(404).json({ ok: false, error: 'inscricao' });
+      const insc = JSON.parse(raw);
+      if (!insc.mapa_slug) return res.status(409).json({ ok: false, error: 'sem_mapa' });
+      const k = 'mapalogo:' + insc.mapa_slug;
+      if (b.remover) { await pipeline([['DEL', k]]); insc.logo = ''; }
+      else if (b.dataUrl) {
+        if (!dataUrlValida(b.dataUrl)) return res.status(400).json({ ok: false, error: 'imagem' });
+        await pipeline([['SET', k, b.dataUrl]]); insc.logo = 'manual';
+      } else {
+        const d = await buscarLogo(b.site || insc.site).catch(() => '');
+        if (!d) return res.status(404).json({ ok: false, error: 'logo_nao_encontrado' });
+        await pipeline([['SET', k, d]]); insc.logo = 'auto';
+      }
+      await pipeline([['SET', 'cr:' + w, JSON.stringify(insc)]]);
+      return res.status(200).json({ ok: true, logo: insc.logo });
     }
     const listaMapas = (req.query && req.query.lista === 'mapas') || /[?&]lista=mapas\b/.test(req.url || '');
     if (listaMapas) {
@@ -81,7 +109,7 @@ module.exports = async (req, res) => {
       if (req.method === 'DELETE') {
         const s = String(b.slug || '').toLowerCase().replace(/[^a-z0-9-]/g, '').slice(0, 80);
         if (!s) return res.status(400).json({ ok: false, error: 'slug' });
-        await pipeline([['DEL', 'mapa:' + s], ['ZREM', 'mapas', s]]);
+        await pipeline([['DEL', 'mapa:' + s, 'mapalogo:' + s], ['ZREM', 'mapas', s]]);
         return res.status(200).json({ ok: true });
       }
       if (req.method === 'POST') {

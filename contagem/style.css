@@ -71,6 +71,13 @@ h2{margin:0;font-weight:700;text-transform:uppercase;font-size:clamp(30px,5vw,54
 .gifts p,.case p{margin:0;color:var(--ink2);font-size:16px}
 .note{margin:16px 0 0;color:var(--ink3);font-size:11px}
 
+.reel{margin-top:40px;display:grid;grid-template-columns:minmax(0,340px) minmax(0,1fr);gap:28px 40px;align-items:center}
+.reel video{width:100%;height:auto;aspect-ratio:9/16;background:#000;border:1px solid rgba(227,177,113,.45);display:block}
+.reel-text{display:flex;flex-direction:column;gap:12px}
+.reel-text p{margin:0;color:var(--ink2);font-size:17px;max-width:420px}
+.reel-text .mono{font-size:12px}
+.reel-title{font-size:clamp(28px,4vw,42px)!important;font-weight:700;text-transform:uppercase;color:var(--ink)!important;line-height:1}
+@media (max-width:640px){.reel{grid-template-columns:1fr}.reel video{max-width:340px;margin:0 auto}.reel-text{order:-1}}
 .case{border:1px solid var(--line);background:rgba(12,14,19,.85);padding:26px 22px;display:flex;flex-direction:column;gap:10px;min-width:0}
 .case.main{margin-top:40px;padding:30px 26px;border-color:rgba(227,177,113,.4)}
 .case-head{display:flex;flex-direction:column;gap:10px}

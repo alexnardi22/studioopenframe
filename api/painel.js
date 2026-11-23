@@ -62,8 +62,9 @@ module.exports = async (req, res) => {
       insc.mapa_slug = r.mapa.slug; insc.mapa_em = r.mapa.atualizado_em;
       // logo: tenta buscar no site/Instagram só se ainda não houver um
       const [temLogo] = await pipeline([['EXISTS', 'mapalogo:' + r.mapa.slug]]);
-      if (!temLogo && insc.site) {
-        const d = await buscarLogo(insc.site).catch(() => '');
+      const fonteLogo = insc.instagram || insc.site;
+      if (!temLogo && fonteLogo) {
+        const d = (await buscarLogo(insc.instagram || '').catch(() => '')) || (await buscarLogo(insc.site || '').catch(() => ''));
         if (d) { await pipeline([['SET', 'mapalogo:' + r.mapa.slug, d]]); insc.logo = 'auto'; }
       }
       await pipeline([['SET', 'mapa:' + r.mapa.slug, JSON.stringify(r.mapa)], ['ZADD', 'mapas', Date.now(), r.mapa.slug], ['SET', 'cr:' + w, JSON.stringify(insc)]]);
@@ -83,7 +84,7 @@ module.exports = async (req, res) => {
         if (!dataUrlValida(b.dataUrl)) return res.status(400).json({ ok: false, error: 'imagem' });
         await pipeline([['SET', k, b.dataUrl]]); insc.logo = 'manual';
       } else {
-        const d = await buscarLogo(b.site || insc.site).catch(() => '');
+        const d = (await buscarLogo(insc.instagram || '').catch(() => '')) || (await buscarLogo(insc.site || '').catch(() => ''));
         if (!d) return res.status(404).json({ ok: false, error: 'logo_nao_encontrado' });
         await pipeline([['SET', k, d]]); insc.logo = 'auto';
       }

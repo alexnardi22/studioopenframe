@@ -166,3 +166,7 @@ code{background:var(--panel2);padding:1px 6px;font-size:14px}
 .cr-genmsg{margin:0 0 12px;min-height:1em}
 code{font-size:.92em;color:var(--gold)}
 .cr-logo label{cursor:pointer}
+.cr-web{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;font-size:15px;margin:-2px 0 8px}
+.cr-web a{color:var(--blue);text-decoration:none;word-break:break-all}
+.cr-nosite{font-size:11px;letter-spacing:.14em;color:#0A0B0E;background:var(--gold);padding:4px 8px;font-weight:700}
+.cr-stats .gold-chip{border-color:var(--gold);color:var(--gold)}

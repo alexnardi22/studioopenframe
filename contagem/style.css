@@ -126,3 +126,5 @@ input:focus,select:focus,textarea:focus{border-color:var(--gold);outline:none}
 
 .foot{display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px 30px;padding:30px var(--pad);border-top:1px solid var(--line);font-size:12px}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+.nosite{margin-top:6px;font-size:15px}
+.nosite input{width:20px;height:20px}

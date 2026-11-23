@@ -324,6 +324,8 @@
     const cnt = {}; listaCR.forEach(w => (w.perdas || []).forEach(p => cnt[p] = (cnt[p] || 0) + 1));
     const st = $('#crstats'); st.innerHTML = '';
     Object.entries(cnt).sort((a, b) => b[1] - a[1]).forEach(([k, n]) => { const s = document.createElement('span'); s.textContent = k.toUpperCase(); const b = document.createElement('b'); b.textContent = n; s.append(b); st.append(s); });
+    const ns = listaCR.filter(w => w.sem_site).length;
+    if (ns) { const s = document.createElement('span'); s.className = 'gold-chip'; s.textContent = 'SEM SITE · OPORTUNIDADE '; const b = document.createElement('b'); b.textContent = ns; s.append(b); st.prepend(s); }
     const ol = $('#crlist'); ol.innerHTML = '';
     listaCR.slice().sort((a, b) => a.created_at < b.created_at ? -1 : 1).forEach((w, i) => {
       const li = document.createElement('li'); li.className = 'l10-card';
@@ -338,7 +340,13 @@
         <div class="l10-actions"><a class="btn btn-line sm wa" target="_blank" rel="noopener">WHATSAPP</a><a class="btn btn-line sm em">E-MAIL</a><button type="button" class="btn btn-danger sm del">REMOVER</button></div>`;
       li.querySelector('.l10-when').textContent = ago(Date.parse(w.created_at));
       li.querySelector('.l10-name').textContent = `${w.empresa}`;
-      const meta = li.querySelector('.l10-meta'); meta.textContent = `${w.nome} · ${w.ramo}${w.site ? ' · ' + w.site : ''} `;
+      const meta = li.querySelector('.l10-meta'); meta.textContent = `${w.nome} · ${w.ramo} `;
+      const web = document.createElement('span'); web.className = 'cr-web';
+      const lnk = (href, txt) => { const a = document.createElement('a'); a.href = href; a.target = '_blank'; a.rel = 'noopener'; a.textContent = txt; return a; };
+      if (w.site) web.append(lnk(/^https?:/i.test(w.site) ? w.site : 'https://' + w.site, w.site));
+      if (w.instagram) { const h = w.instagram.replace(/^@/, ''); if (/^[A-Za-z0-9._]+$/.test(h)) web.append(lnk('https://instagram.com/' + h, '@' + h)); else web.append(document.createTextNode(w.instagram)); }
+      if (w.sem_site) { const b = document.createElement('b'); b.className = 'cr-nosite'; b.textContent = 'SEM SITE · OPORTUNIDADE'; web.append(b); }
+      if (web.childNodes.length) meta.after(web);
       if (w.origem) { const s2 = document.createElement('span'); s2.className = 'l10-src'; s2.textContent = w.origem; meta.append(s2); }
       li.querySelector('.l10-wa').textContent = fmtWa(w.whatsapp) + ' · ' + w.email;
       li.querySelector('[data-k=faz]').textContent = w.faz;
@@ -429,8 +437,8 @@
   });
   $('#crcsv').addEventListener('click', () => {
     const esc = v => `"${String(v == null ? '' : v).replace(/"/g, '""')}"`;
-    const head = ['Inscrito em', 'Empresa', 'Nome', 'WhatsApp', 'E-mail', 'Ramo', 'Site/Instagram', 'O que faz', 'Tarefas', 'Horas/semana', 'Ferramentas', 'Onde perde', 'Origem'];
-    const rows = listaCR.map(w => [new Date(w.created_at).toLocaleString('pt-BR'), w.empresa, w.nome, '+' + w.whatsapp, w.email, w.ramo, w.site, w.faz, w.tarefas, w.horas, w.ferramentas, (w.perdas || []).join('; '), w.origem].map(esc).join(','));
+    const head = ['Inscrito em', 'Empresa', 'Nome', 'WhatsApp', 'E-mail', 'Ramo', 'Site', 'Instagram', 'Sem site', 'O que faz', 'Tarefas', 'Horas/semana', 'Ferramentas', 'Onde perde', 'Origem'];
+    const rows = listaCR.map(w => [new Date(w.created_at).toLocaleString('pt-BR'), w.empresa, w.nome, '+' + w.whatsapp, w.email, w.ramo, w.site, w.instagram || '', w.sem_site ? 'SIM' : '', w.faz, w.tarefas, w.horas, w.ferramentas, (w.perdas || []).join('; '), w.origem].map(esc).join(','));
     const blob = new Blob(['\ufeff' + [head.map(esc).join(',')].concat(rows).join('\n')], { type: 'text/csv;charset=utf-8' });
     const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `contagem-regressiva-${new Date().toISOString().slice(0, 10)}.csv`;
     document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);

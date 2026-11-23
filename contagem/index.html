@@ -188,7 +188,13 @@
             </select>
             <p class="err">Escolha o ramo.</p>
           </div>
-          <div class="field"><label for="site">Site ou Instagram da empresa <span class="opt">(opcional)</span></label><input id="site" maxlength="200" placeholder="@suaempresa ou suaempresa.com"></div>
+          <div class="field"><label for="instagram">Instagram da empresa <span class="opt">(opcional)</span></label><input id="instagram" maxlength="120" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="@suaempresa"></div>
+        </div>
+        <div class="field" id="f-site">
+          <label for="site">Site da empresa</label>
+          <input id="site" type="text" inputmode="url" maxlength="200" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="suaempresa.com">
+          <label class="consent nosite"><input type="checkbox" id="semsite"><span>Ainda não temos site</span></label>
+          <p class="err">Informe o site ou marque “Ainda não temos site”.</p>
         </div>
         <div class="field"><label for="faz">O que sua empresa faz, em uma frase</label><input id="faz" required maxlength="300" placeholder="Ex.: limpeza residencial e comercial em Orlando"><p class="err">Conte em uma frase o que a empresa faz.</p></div>
         <div class="field"><label for="tarefas">Quais 3 tarefas mais tomam o seu tempo ou o da equipe?</label><textarea id="tarefas" rows="3" required maxlength="1500" placeholder="Ex.: responder orçamentos, confirmar agenda, cobrar clientes atrasados"></textarea><p class="err">Conte pelo menos uma tarefa.</p></div>

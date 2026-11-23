@@ -34,7 +34,8 @@ Entre 3 e 5 tarefas, baseadas nas tarefas que a empresa citou.`;
 function raioX(w, orientacao) {
   const linhas = [
     `Empresa: ${w.empresa}`, `Responsável: ${w.nome}`, `Ramo: ${w.ramo}`,
-    w.site ? `Site/Instagram: ${w.site}` : '',
+    w.site ? `Site: ${w.site}` : (w.sem_site ? 'Site: ainda não tem site' : ''),
+    w.instagram ? `Instagram: ${w.instagram}` : '',
     `O que a empresa faz: ${w.faz}`,
     `As tarefas que mais tomam tempo: ${w.tarefas}`,
     `Horas por semana em tarefas repetitivas: ${w.horas}`,

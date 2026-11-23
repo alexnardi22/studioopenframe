@@ -11,6 +11,12 @@ const PERDAS = ['Demora para responder', 'Ligações não atendidas', 'Orçament
 const clip = (v, n) => String(v == null ? '' : v).replace(/\s+/g, ' ').trim().slice(0, n);
 const clipML = (v, n) => String(v == null ? '' : v).trim().slice(0, n);
 
+function igHandle(v) {
+  const t = String(v || '').trim(); if (!t) return '';
+  const m = t.match(/instagram\.com\/([A-Za-z0-9._]{1,30})/i) || t.match(/^@?([A-Za-z0-9._]{1,30})$/);
+  return m ? '@' + m[1].replace(/\.$/, '') : clip(t, 120);
+}
+
 module.exports = async (req, res) => {
   res.setHeader('Cache-Control', 'no-store');
   if (req.method !== 'POST') { res.setHeader('Allow', 'POST'); return res.status(405).json({ ok: false, error: 'method' }); }
@@ -20,7 +26,8 @@ module.exports = async (req, res) => {
   const r = {
     nome: clip(b.nome, 120), empresa: clip(b.empresa, 160),
     whatsapp: String(b.whatsapp || '').replace(/\D/g, ''), email: clip(b.email, 160).toLowerCase(),
-    ramo: clip(b.ramo, 60), site: clip(b.site, 200), faz: clip(b.faz, 300),
+    ramo: clip(b.ramo, 60), site: b.sem_site === true ? '' : clip(b.site, 200).replace(/\s/g, ''),
+    instagram: igHandle(b.instagram), sem_site: b.sem_site === true, faz: clip(b.faz, 300),
     tarefas: clipML(b.tarefas, 1500), horas: clip(b.horas, 20), ferramentas: clip(b.ferramentas, 300),
     perdas: Array.isArray(b.perdas) ? b.perdas.filter(p => PERDAS.includes(p)).slice(0, 8) : [],
     consentimento: b.consentimento === true, origem: clip(b.origem, 120) || null

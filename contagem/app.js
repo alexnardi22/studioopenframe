@@ -36,6 +36,9 @@
   const mark = (el, bad) => { const f = el.closest('.field'); if (f) f.classList.toggle('bad', bad); };
   ['nome', 'empresa', 'whatsapp', 'email', 'ramo', 'faz', 'tarefas', 'horas'].forEach(id => { $(id).addEventListener('input', () => mark($(id), false)); $(id).addEventListener('change', () => mark($(id), false)); });
   $('consent').addEventListener('change', () => $('e-consent').classList.remove('on'));
+  const syncSite = () => { const off = $('semsite').checked; $('site').disabled = off; if (off) $('site').value = ''; mark($('site'), false); };
+  $('semsite').addEventListener('change', syncSite);
+  $('site').addEventListener('input', () => mark($('site'), false));
 
   function validate() {
     const local = $('whatsapp').value.replace(/\D/g, ''), ddi = $('ddi').value, full = ddi + local;
@@ -47,7 +50,8 @@
       ['ramo', !!$('ramo').value],
       ['faz', $('faz').value.trim().length >= 3],
       ['tarefas', $('tarefas').value.trim().length >= 3],
-      ['horas', !!$('horas').value]
+      ['horas', !!$('horas').value],
+      ['site', $('semsite').checked || /^[^\s]+\.[^\s]{2,}$/.test($('site').value.trim().replace(/^https?:\/\//i, ''))]
     ];
     let first = null;
     checks.forEach(([id, ok]) => { mark($(id), !ok); if (!ok && !first) first = $(id); });
@@ -67,7 +71,7 @@
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           nome: $('nome').value, empresa: $('empresa').value, whatsapp: v.whatsapp, email: $('email').value,
-          ramo: $('ramo').value, site: $('site').value, faz: $('faz').value, tarefas: $('tarefas').value,
+          ramo: $('ramo').value, site: $('site').value, instagram: $('instagram').value, sem_site: $('semsite').checked, faz: $('faz').value, tarefas: $('tarefas').value,
           horas: $('horas').value, ferramentas: $('ferramentas').value, perdas, consentimento: true,
           origem, hp_x9: $('hp_x9').value
         })
